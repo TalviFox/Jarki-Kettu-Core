@@ -1,0 +1,18 @@
+# Home Assistant Secrets & Personal Data
+secrets.yaml
+*.pem
+*.key
+
+# Home Assistant Databases & Logs
+*.db
+*.db-shm
+*.db-wal
+home-assistant.log
+home-assistant.log.*
+OZW_Log.txt
+
+# Hidden system folders
+.storage/
+.cloud/
+.vscode/
+.idea/
