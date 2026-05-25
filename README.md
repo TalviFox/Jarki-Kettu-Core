@@ -1,6 +1,8 @@
 # 🦊 Järki Kettu Core (The Clever Fox)
 **Advanced Server-Side HVAC Auto-Switcher for Home Assistant**
 
+*In Finnish folklore, the fox outsmarts larger, stronger animals not through brute force, but through patience, agility, and using the environment to its advantage. Your HVAC should do the same.*
+
 Most "smart" HVAC automations aren't actually smart, they are purely reactive and often fundamentally flawed. Standard thermostat logic usually falls into one of two extremes: keeping the unit off for as long as possible until absolutely necessary, or short-cycling constantly so the temperature never shifts. Both approaches are objectively terrible for your HVAC equipment and work directly against how modern systems (especially heat pumps) were designed to operate, which rely on long, predictable cycles. Järki Kettu Core is more than just an auto-switcher; it actively evaluates indoor physics against outdoor conditions to keep your thermostat in the optimal mode, enforcing healthy, efficient runtimes.
 
 *Created by Talvi Fox / Talvi's Den*
