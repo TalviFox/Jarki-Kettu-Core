@@ -104,7 +104,7 @@ The definitive upgrade for your smart home. This tier gives you access to my ent
 * **📊 Vertailukohta PRO (Envelope Analytics):** Upgrades the free benchmark engine to track physical Heat Loss Rate, Thermal Pressure (Stack Effect), and Room Imbalance Penalties.
 * **🛡️ Kilpi (Environmental Security):** Adds window-open proxy failsafes, cross-breeze weather alerts, and AQI-driven particulate scrubbing.
 
-### 🦊 The Elite Tier: "How the Sausage is Made"
+### 🦊 The Fox Den Tier
 For extreme power users and developers who want it all. This premium tier grants access to my **fully sanitized, monolithic production configuration**. This is the exact 2,000+ line backend YAML and Lovelace Dashboard code that runs my own home. It is designed as a raw, unfiltered masterclass in advanced Jinja templating, trigger-based sensors, and massive-scale smart home architecture. If you want to see exactly how a high-end, automated ecosystem is built and interconnected from the ground up, this is it.
 
 ### 👑 Root Access ($2,000)
