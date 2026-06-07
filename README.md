@@ -32,12 +32,12 @@ By enforcing wide deadbands and **Deep Soaks**, Järki Kettu forces the system t
 ### 2. Latent Heat (Dehumidification)
 Air conditioning is about removing heat *and* moisture. An AC evaporator coil needs to run for about 10-15 minutes just to get cold enough to start pulling water out of the air. If your thermostat short-cycles to keep the air exactly at 72°F, it rarely runs long enough to dehumidify. You end up with a house that is 72°F but 60% humidity, a cold, clammy swamp. Long cycles extract massive amounts of latent moisture.
 
-### 3. If This is Better, Why Doesn't Honeywell/Nest Do It?
+### 3. If This is Better, Why Don't Big Box Brands Do It?
 **Customer Psychology.** People treat thermostats like a volume dial. If a homeowner sets their thermostat to 72°F, and the temperature naturally drifts to 74°F before the AC kicks on, they immediately call a technician and say their unit is broken. 
 To prevent customer support nightmares, smart thermostat brands use razor-thin deadbands to keep the number perfectly still on the screen. In doing so, they are actively ignoring the actual HVAC hardware manufacturer's engineering specs, which explicitly demand long, steady-state cycles for proper compressor oil return and electrical efficiency. They intentionally sacrifice your equipment's lifespan and your actual thermal comfort just to give you the psychological comfort of seeing a static number on a screen.
 
 ### 4. The Comfort Trade-Off
-The only trade-off to the Järki Kettu approach is that you must accept a 3-5 degree fluctuation in your home's air temperature. However, human comfort isn't just about air temperature; it is heavily dictated by **Mean Radiant Temperature (MRT)** and humidity. 
+The only trade-off to the Järki Kettu approach is that you basically have to accept the temperature is a range now. The exact fluctuation depends entirely on your home's thermal retention, in fact, this tool might help you realize you just need to address an insulation problem! However, human comfort isn't just about air temperature; it is heavily dictated by **Mean Radiant Temperature (MRT)** and humidity. 
 
 Because this system deeply soaks the physical walls and aggressively strips out absolute humidity, a room at 75°F under Järki Kettu logic will physically feel vastly more comfortable and breathable than a short-cycled room at 72°F under native thermostat logic. You lose the static number on the wall, but you gain profound, whole-house physical comfort and significantly prolonged equipment life.
 
