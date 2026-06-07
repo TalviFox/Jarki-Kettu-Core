@@ -1,0 +1,243 @@
+# ==============================================================================
+#  JÄRKI KETTU CORE MODULE (The Smart Fox)
+#  Replaces native thermostat "Auto" mode with a server-side coast zone.
+# ==============================================================================
+#  Copyright (c) 2025-2026 Talvi Fox / Talvi's Den.
+#  License: Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
+#  License URL: https://creativecommons.org/licenses/by-nc/4.0/
+#  Provided for personal, non-commercial use. 
+#  Commercial redistribution or resale is strictly prohibited.
+# ==============================================================================
+#  DISCLAIMER & LIMITATIONS:
+#  - Hardware: Tested with Honeywell T9. Your mileage with other brands may vary.
+#  - Scope: This module controls Mode (Heat/Cool/Off) and Setpoints only.
+#  - Exclusions: This does NOT include Fan Control, Dehumidification, or 
+#    multi-zone damper control. 
+#  - Integration: It is highly recommended to link your thermostat to HA via the 
+#    HomeKit Controller integration for immediate push-state updates (no cloud).
+#  - Thermostat Settings: Set your thermostat fan to "Circulate" (if available) 
+#    and DELETE all native zones & scheduling timers on the wall unit.
+#  - Behavior: This system relies on wide deadbands and short-cycle prevention. 
+#    Expect a temp swing of 4-6 degrees between cycles. Equipment will behave nicer.
+#  - Heat Pumps: The dynamic setpoint stretch pushes the physical thermostat +2°F 
+#    to force a deep soak. Depending on your wall unit's staging logic (the T9 can be 
+#    stubborn), this might inadvertently trigger Aux/Heat Strips. Mileage may vary.
+#  - Warranty: Provided AS-IS. You are responsible for your equipment's safety.
+# ==============================================================================
+#  SETUP INSTRUCTIONS:
+#  1. Place this file in your Home Assistant 'packages' folder.
+#  2. Find & Replace the following placeholders:
+#     climate.YOUR_THERMOSTAT       -> Your actual climate entity
+#     sensor.YOUR_ROOM_SENSOR_1     -> Room 1 Temperature Sensor
+#     sensor.YOUR_ROOM_SENSOR_2     -> Room 2 Temperature Sensor
+# ==============================================================================
+
+input_select:
+  hvac_heat_system_type:
+    name: Heat System Type
+    icon: mdi:heating-coil
+    options:
+      - "Gas / Boiler (+2.0° Soak)"
+      - "Heat Pump (Hardware Locked Aux) (+2.0° Soak)"
+      - "Heat Pump (Restrictive Aux) (+1.0° Micro-Walk)"
+
+input_boolean:
+  hvac_auto_mode_director_enable:
+    name: "Enable Auto HVAC Mode Director"
+    icon: mdi:thermostat-auto
+
+input_number:
+  hvac_target_heat_temp:
+    name: House Target Heat Temp
+    min: 65
+    max: 78
+    step: 0.5
+    unit_of_measurement: "°F"
+    icon: mdi:fire
+
+  hvac_target_cool_temp:
+    name: House Target Cool Temp
+    min: 65
+    max: 78
+    step: 0.5
+    unit_of_measurement: "°F"
+    icon: mdi:snowflake
+
+template:
+  - sensor:
+      - name: "House Temperature Average"
+        unique_id: hvac_free_house_temperature_average
+        unit_of_measurement: "°F"
+        device_class: temperature
+        state: >
+          {# Add as many sensors here as you want #}
+          {% set raw_sensors = [
+            states('sensor.YOUR_ROOM_SENSOR_1'),
+            states('sensor.YOUR_ROOM_SENSOR_2')
+          ] %}
+          
+          {# Safety Filter: Reject unknown, unavailable, and frozen/error (<= 0) readings #}
+          {% set valid_sensors = raw_sensors 
+             | reject('in', ['unknown', 'unavailable']) 
+             | map('float', -99) 
+             | reject('<=', 0) 
+             | list %}
+          
+          {% if valid_sensors | count > 0 %}
+            {{ (valid_sensors | sum / valid_sensors | count) | round(1) }}
+          {% else %}
+            unavailable
+          {% endif %}
+
+      - name: "Dynamic Smart Mode Demand"
+        unique_id: hvac_free_smart_mode_demand
+        state: >
+          {% if is_state('input_boolean.hvac_auto_mode_director_enable', 'off') %}
+            off
+          {% else %}
+            {% set target_heat = states('input_number.hvac_target_heat_temp') | float(68.0) %}
+            {% set target_cool = states('input_number.hvac_target_cool_temp') | float(72.0) %}
+            
+            {# Failsafe: If custom sensors die, fall back to thermostat's internal sensor #}
+            {% set ha_average = states('sensor.house_temperature_average') %}
+            {% if ha_average in ['unavailable', 'unknown'] %}
+              {% set active_temp = state_attr('climate.YOUR_THERMOSTAT', 'current_temperature') | float(70) %}
+            {% else %}
+              {% set active_temp = ha_average | float(70) %}
+            {% endif %}
+            
+            {% set current_demand = states('sensor.dynamic_smart_mode_demand') %}
+            
+            {# Nuanced Coast Zones: Replicates the original heavy thermal soak logic #}
+            {% if current_demand == 'heat' %}
+              {{ 'heat' if active_temp < (target_heat + 0.5) else 'off' }}
+            {% elif current_demand == 'cool' %}
+              {{ 'cool' if active_temp > target_cool else 'off' }}
+            {% elif active_temp <= (target_heat - 1.0) %}
+              heat
+            {% elif active_temp >= (target_cool + 2.0) %}
+              cool
+            {% else %}
+              off
+            {% endif %}
+          {% endif %}
+
+automation:
+  - alias: "HVAC Free: Auto Mode Director"
+    id: hvac_free_auto_mode_director
+    trigger:
+      # Debounce to prevent short-cycling
+      - platform: state
+        entity_id: sensor.dynamic_smart_mode_demand
+        for: "00:05:00"
+      # Catch manual toggle enablement
+      - platform: state
+        entity_id: input_boolean.hvac_auto_mode_director_enable
+        to: "on"
+    condition:
+      - condition: state
+        entity_id: input_boolean.hvac_auto_mode_director_enable
+        state: "on"
+    action:
+      - choose:
+          # --- DEMAND: COOL ---
+          - conditions:
+              - condition: state
+                entity_id: sensor.dynamic_smart_mode_demand
+                state: "cool"
+            sequence:
+              - action: climate.set_hvac_mode
+                continue_on_error: true
+                target: { entity_id: climate.YOUR_THERMOSTAT }
+                data: { hvac_mode: "cool" }
+              - delay: { seconds: 2 }
+              - action: climate.set_temperature
+                continue_on_error: true
+                target: { entity_id: climate.YOUR_THERMOSTAT }
+                # Dynamic Setpoint: Push physical setpoint down based on wall unit's actual temp to force engagement
+                data: 
+                  temperature: >
+                    {% set internal = state_attr('climate.YOUR_THERMOSTAT', 'current_temperature') | float(72) %}
+                    {% set start_sp = internal - 2.0 %}
+                    {{ 65.0 if start_sp < 65.0 else start_sp | round(0) }}
+
+          # --- DEMAND: HEAT ---
+          - conditions:
+              - condition: state
+                entity_id: sensor.dynamic_smart_mode_demand
+                state: "heat"
+            sequence:
+              - action: climate.set_hvac_mode
+                continue_on_error: true
+                target: { entity_id: climate.YOUR_THERMOSTAT }
+                data: { hvac_mode: "heat" }
+              - delay: { seconds: 2 }
+              - action: climate.set_temperature
+                continue_on_error: true
+                target: { entity_id: climate.YOUR_THERMOSTAT }
+                # Dynamic Setpoint: Heat Pumps get a +1 carrot to avoid Aux Strips. Gas jumps straight to Target+2.
+                data: 
+                  temperature: >
+                    {% set heat_type = states('input_select.hvac_heat_system_type') %}
+                    {% set target = states('input_number.hvac_target_heat_temp') | float(68) %}
+                    {% set internal = state_attr('climate.YOUR_THERMOSTAT', 'current_temperature') | float(68) %}
+                    {% if 'Restrictive' in heat_type %}
+                      {% set start_sp = internal + 1.0 %}
+                      {{ 76.0 if start_sp > 76.0 else start_sp | round(0) }}
+                    {% elif 'Hardware Locked' in heat_type %}
+                      {% set start_sp = internal + 2.0 %}
+                      {{ 76.0 if start_sp > 76.0 else start_sp | round(0) }}
+                    {% else %}
+                      {{ (target + 2.0) | round(0) }}
+                    {% endif %}
+
+          # --- DEMAND: OFF (COAST ZONE) ---
+          - conditions:
+              - condition: state
+                entity_id: sensor.dynamic_smart_mode_demand
+                state: "off"
+              - condition: not
+                conditions:
+                  - condition: state
+                    entity_id: climate.YOUR_THERMOSTAT
+                    state: "off"
+            sequence:
+              - action: climate.set_hvac_mode
+                continue_on_error: true
+                target: { entity_id: climate.YOUR_THERMOSTAT }
+                data: { hvac_mode: "off" }
+    mode: restart
+
+  - alias: "HVAC Free: Heat Pump Setpoint Walker"
+    id: hvac_free_heat_pump_setpoint_walker
+    trigger:
+      # Check in every 20 minutes to move the carrot
+      - platform: time_pattern
+        minutes: "/20"
+    condition:
+      - condition: state
+        entity_id: input_boolean.hvac_auto_mode_director_enable
+        state: "on"
+      - condition: state
+        entity_id: climate.YOUR_THERMOSTAT
+        state: "heat"
+      - condition: template
+        value_template: "{{ 'Gas' not in states('input_select.hvac_heat_system_type') }}"
+      - condition: state
+        entity_id: sensor.dynamic_smart_mode_demand
+        state: "heat"
+      - condition: template
+        value_template: >
+          {% set internal = state_attr('climate.YOUR_THERMOSTAT', 'current_temperature') | float(75) %}
+          {% set target = states('input_number.hvac_target_heat_temp') | float(70.0) %}
+          {{ internal < (target + 0.5) }}
+    action:
+      - action: climate.set_temperature
+        continue_on_error: true
+        target: { entity_id: climate.YOUR_THERMOSTAT }
+        data:
+          temperature: >
+            {% set internal = state_attr('climate.YOUR_THERMOSTAT', 'current_temperature') | float(68) %}
+            {% set next_step = internal + 1.0 %}
+            {{ 76.0 if next_step > 76.0 else next_step | round(0) }}
+    mode: single
