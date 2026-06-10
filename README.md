@@ -5,7 +5,7 @@
 
 Most "smart" HVAC automations aren't actually smart, they are purely reactive and often fundamentally flawed. Standard thermostat logic usually falls into one of two extremes: keeping the unit off for as long as possible until absolutely necessary, or short-cycling constantly so the temperature never shifts. Both approaches are objectively terrible for your HVAC equipment and work directly against how modern systems (especially heat pumps) were designed to operate, which rely on long, predictable cycles. Järki Kettu Core is more than just an auto-switcher; it actively evaluates indoor physics against outdoor conditions to keep your thermostat in the optimal mode, enforcing healthy, efficient runtimes.
 
-*Created by Talvi Fox / Talvi's Den*
+*Created by Talvi Fox / FoxDen Software*
 
 ---
 
@@ -50,7 +50,7 @@ But you are trading your electric bill for the lifespan of a $15,000+ piece of h
 
 When you force a thermostat to hold a single, unyielding number, you are abusing the machine with constant 5-minute short-cycles. You are subjecting the compressor to massive start-up amperage spikes and terrible moisture-extraction efficiency. Järki Kettu takes this a step further by finding the perfect middle ground. It doesn't use massive, expensive setbacks, but it also doesn't hold a static number. By introducing a controlled **Coast Zone** of just a few degrees, it avoids the energy-wasting recovery spikes *while also* eliminating the hardware-destroying short-cycles. You take care of the equipment, and the equipment takes far better care of you.
 
-## � Origin Story (Why I Built This)
+## 🦊 Origin Story (Why I Built This)
 After abruptly leaving the Ecobee ecosystem in search of something that crashed less, I bought into the Honeywell ecosystem and was immediately disappointed to find out they barely supported their flagship T9 thermostat. Frustrated, I pulled the unit into Home Assistant to try and fix it myself, but eventually hit a wall and shelved the project.
 
 Months later, a coworker showed off their own Home Assistant setup, which completely reignited my motivation. I spent the next six months straight coding my ideas through pure trial and error. I built the fan controller from scratch and literally lived through a freezing winter of bugs, waking up to the system stuck in the wrong modes, until I finally ironed out the math.
@@ -73,7 +73,7 @@ Don't just take my word for it, prove the physics with your own data. I highly e
 
 You will see the erratic short-cycling disappear entirely, replaced by massive, highly efficient, deep-soaking runs. If you make a video, write a blog post, or just want to show off your Grafana charts comparing the "Before and After," please let me know! I love seeing this logic optimized for different environments and hardware.
 
-## ️ Why Trust a Sysadmin with Your HVAC?
+## ⚙️ Why Trust a Sysadmin with Your HVAC?
 I am not a licensed HVAC technician. I'm a Systems Administrator. But if you think about it, a house is just a giant server chassis, and your HVAC unit is a massive cooling fan. Standard smart thermostats run on logic that feels like a BIOS from 1995: *"It got hot. Turn on fan."* 
 
 As a sysadmin, I look at the world through telemetry, feedback loops, root cause analysis, and uptime efficiency. When a thermostat short-cycles, an HVAC tech might see a hardware quirk; I see a flawed logic loop and poor resource allocation. I didn't approach this like a mechanic fixing a machine; I approached it like an IT engineer optimizing a data center. The result is a mathematically sound, telemetry-driven orchestration engine that treats your home's thermal dynamics with the exact same respect as a production server environment.
@@ -89,7 +89,7 @@ This does not invalidate the T9 work! The core logic remains identical. However,
 **Recommended Sensors:**
 To feed the logic engine, I personally use Shelly ZB e-ink displays for indoor metrics, and standard non-e-ink Shelly sensors for the outdoors. You can use whichever brands make sense for your environment, as long as they pipe reliably into Home Assistant!
 
-## ️ Installation & Setup
+## ⚙️ Installation & Setup
 1. Ensure you have your thermostat and temperature sensors integrated into Home Assistant. (Fully supports native Home Assistant HVAC integrations. I use the Homekit Integration for immediate local-push updates).
 2. Download `jarki_kettu_core.yaml` and place it in your Home Assistant `packages/` directory.
 3. Open the file and perform a Find & Replace for:
@@ -99,7 +99,7 @@ To feed the logic engine, I personally use Shelly ZB e-ink displays for indoor m
 5. **Important:** On your physical wall thermostat, delete all native schedules/timers and set the fan to "Circulate" (if available). Let Järki Kettu drive!
 
 ## 💎 Järki Kettu Pro & Elite Access (Patreon) (Coming Soon)
-Järki Kettu Core is just the foundation. Over on my Patreon (Talvi's Den), I offer structured tiers to help you take your system to the next level. 
+Järki Kettu Core is just the foundation. Over on my Patreon (FoxDen Software), I offer structured tiers to help you take your system to the next level. 
 
 ### ⚡ Järki Kettu Pro (Coming Soon)
 *(Want just one specific feature? You can grab individual modules a-la-carte from my Ko-fi Shop!)*
