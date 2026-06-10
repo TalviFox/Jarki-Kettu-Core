@@ -13,8 +13,9 @@
 #  - Scope: This module controls Mode (Heat/Cool/Off) and Setpoints only.
 #  - Exclusions: This does NOT include Fan Control, Dehumidification, or 
 #    multi-zone damper control. 
-#  - Integration: It is highly recommended to link your thermostat to HA via the 
-#    HomeKit Controller integration for immediate push-state updates (no cloud).
+#  - Integration: Fully supports native Home Assistant HVAC integrations.
+#    (For physical units, local-push integrations like HomeKit Controller are 
+#    highly recommended for immediate, cloud-free state updates).
 #  - Thermostat Settings: Set your thermostat fan to "Circulate" (if available) 
 #    and DELETE all native zones & scheduling timers on the wall unit.
 #  - Behavior: This system relies on wide deadbands and short-cycle prevention. 
