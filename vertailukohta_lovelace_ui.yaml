@@ -1,0 +1,96 @@
+# ==============================================================================
+#  JÄRKI KETTU: VERTAILUKOHTA (UI Dashboard Cards)
+# ==============================================================================
+#  SETUP INSTRUCTIONS:
+#  1. Go to your Dashboard -> Edit Dashboard -> Add Card -> Manual.
+#  2. Paste this exact code to create a clean grid showing your scores.
+#
+#  [PREREQUISITES]
+#  This dashboard uses `card_mod` for premium transparent styling.
+#  Credit: Thomas Lovén (https://github.com/thomasloven/lovelace-card-mod)
+#  Checklist: Install HACS -> Download `card_mod` -> Clear Browser Cache.
+# ==============================================================================
+
+type: vertical-stack
+cards:
+  - type: markdown
+    content: >
+      {%- set c_24 = states('sensor.vertailukohta_comfort_index_24h') | float('unavailable') -%} 
+      {%- set c_7d = states('sensor.vertailukohta_comfort_index_7d') | float('unavailable') -%}
+      {%- set e_24 = states('sensor.vertailukohta_efficiency_index_24h') | float('unavailable') -%} 
+      {%- set e_7d = states('sensor.vertailukohta_efficiency_index_7d') | float('unavailable') -%} 
+
+      {%- macro c_col(v) -%}
+        {%- if v == 'unavailable' -%}#666{%- elif v < 70 -%}#db4437{%- elif v < 85 -%}#ffa600{%- elif v < 93 -%}#f4b400{%- else -%}#0f9d58{%- endif -%}
+      {%- endmacro -%}
+
+      {%- macro e_col(v) -%}
+        {%- if v == 'unavailable' -%}#666{%- elif v < 50 -%}#db4437{%- elif v < 75 -%}#ffa600{%- elif v < 85 -%}#f4b400{%- else -%}#0f9d58{%- endif -%}
+      {%- endmacro -%}
+
+      {%- macro dot(v, type) -%}
+        {%- if v == 'unavailable' -%}⚪
+        {%- elif type == 'c' -%}{{ '🔴' if v < 70 else '🟡' if v < 85 else '🟢' }}
+        {%- else -%}{{ '🔴' if v < 50 else '🟡' if v < 75 else '🟢' }}
+        {%- endif -%}
+      {%- endmacro -%}
+
+      ## 📊 Performance & Comfort
+
+      **24h Status:** {{ dot(c_24, 'c') }} Comf: <span style="color: {{
+      c_col(c_24) }}; font-weight: bold;">{{ c_24 | round(1) if c_24 !=
+      'unavailable' else '---' }}%</span> <span style="color: #666"> |
+      </span> {{ dot(e_24, 'e') }} Eff: <span style="color: {{
+      e_col(e_24) }}; font-weight: bold;">{{ e_24 | round(1) if e_24 !=
+      'unavailable' else '---' }}%</span><br> 
+      
+      **7-Day Trend:** {{ dot(c_7d, 'c') }} Comf: <span style="color: {{ c_col(c_7d) }};
+      font-weight: bold;">{{ c_7d | round(1) if c_7d != 'unavailable'
+      else '---' }}%</span> <span style="color: #666"> | </span> {{
+      dot(e_7d, 'e') }} Eff: <span style="color: {{ e_col(e_7d) }};
+      font-weight: bold;">{{ e_7d | round(1) if e_7d != 'unavailable'
+      else '---' }}%</span>
+    card_mod:
+      style:
+        ha-markdown:
+          $: >
+            h2 { font-size: 24px !important; border-bottom: 2px solid
+            #555; margin-bottom: 12px !important; margin-top: 0px
+            !important; } 
+            p { font-size: 18px !important; line-height: 1.4 !important; }
+        .: >
+          ha-card { padding: 12px; background: rgba(30,30,30,0.4); border-radius: 12px; }
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: gauge
+        entity: sensor.vertailukohta_comfort_index_24h
+        name: 24h Comfort
+        needle: true
+        min: 0
+        max: 100
+        segments:
+          - from: 0
+            color: '#db4437'
+          - from: 70
+            color: '#ffa600'
+          - from: 85
+            color: '#f4b400'
+          - from: 93
+            color: '#0f9d58'
+      - type: gauge
+        entity: sensor.vertailukohta_efficiency_index_24h
+        name: 24h Efficiency
+        needle: true
+        min: 0
+        max: 100
+        segments:
+          - from: 0
+            color: '#db4437'
+          - from: 50
+            color: '#ffa600'
+          - from: 75
+            color: '#f4b400'
+          - from: 85
+            color: '#0f9d58'

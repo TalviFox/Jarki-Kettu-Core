@@ -1,0 +1,240 @@
+# ==============================================================================
+#  JÃ„RKI KETTU: VERTAILUKOHTA (Benchmark & Validation Engine)
+#  Standalone HVAC Comfort & Efficiency Scoring System
+# ==============================================================================
+#  Copyright (c) 2025-2026 Talvi Fox / Talvi's Den. All rights reserved.
+#  Provided for personal, non-commercial use.
+# ==============================================================================
+#  SETUP INSTRUCTIONS:
+#  Perform a Find & Replace for the following placeholders to map your home:
+#
+#  [HVAC SYSTEM]
+#    climate.YOUR_THERMOSTAT        -> Your primary thermostat
+#    switch.YOUR_HVAC_FAN           -> (Optional) Your HVAC fan relay. 
+#                                      If you don't have one, replace it with a dummy boolean.
+#
+#  [ENVIRONMENTAL SENSORS]
+#    sensor.YOUR_INDOOR_TEMP        -> Indoor temperature (Average or Thermostat temp)
+#    sensor.YOUR_OUTDOOR_TEMP       -> Outdoor temperature
+#    sensor.YOUR_INDOOR_HUMIDITY    -> Indoor humidity %
+#
+#  [NOTIFICATIONS]
+#    notify.YOUR_MOBILE_APP         -> The service call to send the morning report
+# ==============================================================================
+
+input_number:
+  vertailukohta_target_heat:
+    name: "Benchmark: Target Heat Setpoint"
+    min: 65
+    max: 75
+    step: 1
+    initial: 68
+    unit_of_measurement: "Â°F"
+    icon: mdi:fire
+
+  vertailukohta_target_cool:
+    name: "Benchmark: Target Cool Setpoint"
+    min: 68
+    max: 78
+    step: 1
+    initial: 72
+    unit_of_measurement: "Â°F"
+    icon: mdi:snowflake
+
+template:
+  - binary_sensor:
+      - name: "Vertailukohta Heating Active"
+        unique_id: vertailukohta_heating_active
+        state: "{{ is_state_attr('climate.YOUR_THERMOSTAT', 'hvac_action', 'heating') }}"
+      - name: "Vertailukohta Cooling Active"
+        unique_id: vertailukohta_cooling_active
+        state: "{{ is_state_attr('climate.YOUR_THERMOSTAT', 'hvac_action', 'cooling') }}"
+
+  - sensor:
+      # ------------------------------------------------------------------------
+      # INSTANT COMFORT SCORE
+      # ------------------------------------------------------------------------
+      - name: "Vertailukohta Instant Comfort Score"
+        unique_id: vertailukohta_instant_comfort_score
+        unit_of_measurement: "%"
+        icon: mdi:sofa
+        state_class: measurement
+        state: >
+          {% set t_heat = states('input_number.vertailukohta_target_heat') | float(68.0) %}
+          {% set t_cool = states('input_number.vertailukohta_target_cool') | float(72.0) %}
+          {% set current = states('sensor.YOUR_INDOOR_TEMP') | float(72.0) %}
+          {% set out = states('sensor.YOUR_OUTDOOR_TEMP') | float(50) %}
+          
+          {# Determine active target based on outdoor temp #}
+          {% set active_target = t_cool if out >= 60 else t_heat %}
+          {% set temp_drift = (current - active_target) | abs %}
+          
+          {# Temp Penalty: Exponential. 1 degree off = -2%, 3 degrees off = -18% #}
+          {% set temp_penalty = temp_drift ** 2 * 2 %}
+          
+          {% set hum = states('sensor.YOUR_INDOOR_HUMIDITY') | float(50) %}
+          
+          {# Wet Penalty: Penalize if it's too wet (> 55%) #}
+          {% set wet_drift = [hum - 55.0, 0] | max %} 
+          {% set wet_penalty = wet_drift * 1.5 %}
+          
+          {# Dry Penalty: Winter air below 35% RH causes dry skin and static #}
+          {% set dry_drift = [35.0 - hum, 0] | max %}
+          {% set dry_penalty = dry_drift * 1.0 %}
+          
+          {% set score = 100 - temp_penalty - wet_penalty - dry_penalty %}
+          {{ [ [score, 0] | max, 100] | min | round(1) }}
+
+      # ------------------------------------------------------------------------
+      # EFFICIENCY INDEXES
+      # ------------------------------------------------------------------------
+      - name: "Vertailukohta Efficiency Index 24h"
+        unique_id: vertailukohta_efficiency_index_24h
+        unit_of_measurement: "%"
+        icon: mdi:gauge
+        state_class: measurement
+        state: >
+          {% set heat_effort = states('sensor.vertailukohta_heat_effort_24h') | float(0) %}
+          {% set cool_effort = states('sensor.vertailukohta_cool_effort_24h') | float(0) %}
+          {% set total_effort = heat_effort + cool_effort %}
+          {% set out = states('sensor.YOUR_OUTDOOR_TEMP') | float(50) %}
+          {% set current = states('sensor.YOUR_INDOOR_TEMP') | float(72) %}
+          {% set delta_t = (out - current) | abs %}
+          
+          {# A standard HVAC expects ~3.5% runtime per degree of delta-T #}
+          {% set expected_effort = delta_t * 3.5 %}
+          {% set effort_penalty = [total_effort - expected_effort, 0] | max * 1.5 %}
+          
+          {% set score = 100 - effort_penalty %}
+          {{ [ [score, 0] | max, 100] | min | round(1) }}
+
+      - name: "Vertailukohta Efficiency Index 7d"
+        unique_id: vertailukohta_efficiency_index_7d
+        unit_of_measurement: "%"
+        icon: mdi:gauge
+        state_class: measurement
+        state: >
+          {% set heat_effort = states('sensor.vertailukohta_heat_effort_7d') | float(0) %}
+          {% set cool_effort = states('sensor.vertailukohta_cool_effort_7d') | float(0) %}
+          {% set total_effort = heat_effort + cool_effort %}
+          
+          {# Without a 7d outdoor average, base penalty on a 35% standard baseline #}
+          {% set effort_penalty = [total_effort - 35, 0] | max * 1.2 %}
+          
+          {% set score = 100 - effort_penalty %}
+          {{ [ [score, 0] | max, 100] | min | round(1) }}
+
+sensor:
+  # ------------------------------------------------------------------------
+  # AGGREGATORS (Required for scoring history)
+  # ------------------------------------------------------------------------
+  - platform: statistics
+    name: "Vertailukohta Comfort Index 24h"
+    unique_id: vertailukohta_comfort_index_24h
+    entity_id: sensor.vertailukohta_instant_comfort_score
+    state_characteristic: mean
+    max_age:
+      hours: 24
+    sampling_size: 2000
+
+  - platform: statistics
+    name: "Vertailukohta Comfort Index 7d"
+    unique_id: vertailukohta_comfort_index_7d
+    entity_id: sensor.vertailukohta_instant_comfort_score
+    state_characteristic: mean
+    max_age:
+      hours: 168
+    sampling_size: 14000
+
+  # ------------------------------------------------------------------------
+  # HISTORY STATS (Tracking effort and runtime)
+  # ------------------------------------------------------------------------
+  - platform: history_stats
+    name: "Vertailukohta Heat Effort 24h"
+    entity_id: binary_sensor.vertailukohta_heating_active
+    state: "on"
+    type: ratio
+    end: "{{ now() }}"
+    duration: { hours: 24 }
+
+  - platform: history_stats
+    name: "Vertailukohta Cool Effort 24h"
+    entity_id: binary_sensor.vertailukohta_cooling_active
+    state: "on"
+    type: ratio
+    end: "{{ now() }}"
+    duration: { hours: 24 }
+
+  - platform: history_stats
+    name: "Vertailukohta Heat Effort 7d"
+    entity_id: binary_sensor.vertailukohta_heating_active
+    state: "on"
+    type: ratio
+    end: "{{ now() }}"
+    duration: { days: 7 }
+
+  - platform: history_stats
+    name: "Vertailukohta Cool Effort 7d"
+    entity_id: binary_sensor.vertailukohta_cooling_active
+    state: "on"
+    type: ratio
+    end: "{{ now() }}"
+    duration: { days: 7 }
+
+  # --- YESTERDAY RUNTIMES FOR MORNING REPORT ---
+  - platform: history_stats
+    name: "Vertailukohta Heat Runtime Yesterday"
+    entity_id: binary_sensor.vertailukohta_heating_active
+    state: "on"
+    type: time
+    start: "{{ today_at('00:00') - timedelta(days=1) }}"
+    end: "{{ today_at('00:00') }}"
+
+  - platform: history_stats
+    name: "Vertailukohta Cool Runtime Yesterday"
+    entity_id: binary_sensor.vertailukohta_cooling_active
+    state: "on"
+    type: time
+    start: "{{ today_at('00:00') - timedelta(days=1) }}"
+    end: "{{ today_at('00:00') }}"
+
+  - platform: history_stats
+    name: "Vertailukohta Fan Usage Yesterday"
+    entity_id: switch.YOUR_HVAC_FAN
+    state: "on"
+    type: time
+    start: "{{ today_at('00:00') - timedelta(days=1) }}"
+    end: "{{ today_at('00:00') }}"
+
+automation:
+  # ------------------------------------------------------------------------------
+  # DAILY EFFICIENCY REPORT NOTIFICATION
+  # ------------------------------------------------------------------------------
+  - alias: "Vertailukohta: Daily Efficiency Summary"
+    id: vertailukohta_daily_efficiency_summary
+    trigger:
+      - platform: time
+        at: "08:30:00"
+    action:
+      - action: notify.YOUR_MOBILE_APP
+        data:
+          title: "ðŸ“Š Yesterdays HVAC Report"
+          message: >
+            {% set score = states('sensor.vertailukohta_efficiency_index_24h') | float(0) %}
+            {% set status = 'ðŸŸ¢ Good' if score >= 85 else ('ðŸŸ¡ Fair' if score >= 75 else 'ðŸ”´ Poor') %}
+            {% set heat = states('sensor.vertailukohta_heat_runtime_yesterday') | float(0) | round(1) %}
+            {% set cool = states('sensor.vertailukohta_cool_runtime_yesterday') | float(0) | round(1) %}
+            {% set fan = states('sensor.vertailukohta_fan_usage_yesterday') | float(0) | round(1) %}
+            
+            {{ status }} | Efficiency: {{ score }}%
+            
+            {% set msg = [] %}
+            {% if heat > 0 %}{% set msg = msg + ['ðŸ”¥ Heat: ' ~ heat ~ 'h'] %}{% endif %}
+            {% if cool > 0 %}{% set msg = msg + ['â„ï¸ Cool: ' ~ cool ~ 'h'] %}{% endif %}
+            {% if fan > 0 %}{% set msg = msg + ['ðŸ’¨ Fan: ' ~ fan ~ 'h'] %}{% endif %}
+            
+            {% if msg | length == 0 %}
+              ðŸ’¤ System was completely idle yesterday.
+            {% else %}
+              {{ msg | join('\n') }}
+            {% endif %}
