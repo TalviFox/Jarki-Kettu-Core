@@ -73,23 +73,29 @@ Don't just take my word for it, prove the physics with your own data. I highly e
 
 You will see the erratic short-cycling disappear entirely, replaced by massive, highly efficient, deep-soaking runs. If you make a video, write a blog post, or just want to show off your Grafana charts comparing the "Before and After," please let me know! I love seeing this logic optimized for different environments and hardware.
 
-## �️ Why Trust a Sysadmin with Your HVAC?
+## ️ Why Trust a Sysadmin with Your HVAC?
 I am not a licensed HVAC technician. I'm a Systems Administrator. But if you think about it, a house is just a giant server chassis, and your HVAC unit is a massive cooling fan. Standard smart thermostats run on logic that feels like a BIOS from 1995: *"It got hot. Turn on fan."* 
 
 As a sysadmin, I look at the world through telemetry, feedback loops, root cause analysis, and uptime efficiency. When a thermostat short-cycles, an HVAC tech might see a hardware quirk; I see a flawed logic loop and poor resource allocation. I didn't approach this like a mechanic fixing a machine; I approached it like an IT engineer optimizing a data center. The result is a mathematically sound, telemetry-driven orchestration engine that treats your home's thermal dynamics with the exact same respect as a production server environment.
 
-## � Hardware Compatibility
-This module is designed to work with almost any modern 24V Home Assistant-compatible smart thermostat. While it was built and extensively tested using a **Honeywell T9** (and some default temperature stretches/delays are tuned to its specific staging nuances), the logic lives entirely inside Home Assistant. It is **not** locked into the Honeywell ecosystem, and you can easily tweak the variables to fit your specific equipment.
+## 🔌 Hardware Compatibility
+This module is designed to work with almost any modern 24V Home Assistant-compatible smart thermostat. The logic lives entirely inside Home Assistant and is **not** locked into any specific ecosystem. 
 
-*Fun fact: This project originally started specifically to work around the T9's biggest annoyances. However, the deeper I got into the code, the more I realized that completely overriding the thermostat and replacing its internal brain was the only real answer! While there are no plans to drop support for the T9, the project will definitely be moving toward more open-API hardware platforms in the not-so-distant future.*
+**A Note on the Honeywell T9 vs. T7900:**
+This project originally started specifically to work around the Honeywell T9's biggest annoyances, and 99% of the foundational code was built and tested against it. However, I ended up transitioning to the **T7900** platform earlier than expected. 
 
-## �️ Installation & Setup
-1. Ensure you have your thermostat and temperature sensors integrated into Home Assistant. (I use the Homekit Integration)
+This does not invalidate the T9 work! The core logic remains identical. However, please be aware that **all future updates will be focused on the T7900 platform and generic open-API thermostats.** This absolutely will not bar the T9 (or any other restricted thermostat) from working, but depending on the thermostat's internal logic, future updates may require you to rely on some of my less desirable, brute-force workarounds to get the same results.
+
+**Recommended Sensors:**
+To feed the logic engine, I personally use Shelly ZB e-ink displays for indoor metrics, and standard non-e-ink Shelly sensors for the outdoors. You can use whichever brands make sense for your environment, as long as they pipe reliably into Home Assistant!
+
+## ️ Installation & Setup
+1. Ensure you have your thermostat and temperature sensors integrated into Home Assistant. (Fully supports native Home Assistant HVAC integrations. I use the Homekit Integration for immediate local-push updates).
 2. Download `jarki_kettu_core.yaml` and place it in your Home Assistant `packages/` directory.
 3. Open the file and perform a Find & Replace for:
    - `climate.YOUR_THERMOSTAT`
    - `sensor.YOUR_ROOM_SENSOR_1` etc...
-4. Download `jarki_kettu_ui_dashboard.yaml`, open your Home Assistant Dashboard, add a "Manual" Lovelace card, and paste the code.
+4. Download `jarki_kettu_core_ui_dashboard.yaml`, open your Home Assistant Dashboard, add a "Manual" Lovelace card, and paste the code.
 5. **Important:** On your physical wall thermostat, delete all native schedules/timers and set the fan to "Circulate" (if available). Let Järki Kettu drive!
 
 ## 💎 Järki Kettu Pro & Elite Access (Patreon)
