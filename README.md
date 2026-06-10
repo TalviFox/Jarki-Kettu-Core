@@ -98,10 +98,10 @@ To feed the logic engine, I personally use Shelly ZB e-ink displays for indoor m
 4. Download `jarki_kettu_core_ui_dashboard.yaml`, open your Home Assistant Dashboard, add a "Manual" Lovelace card, and paste the code.
 5. **Important:** On your physical wall thermostat, delete all native schedules/timers and set the fan to "Circulate" (if available). Let Järki Kettu drive!
 
-## 💎 Järki Kettu Pro & Elite Access (Patreon)
+## 💎 Järki Kettu Pro & Elite Access (Patreon) (Coming Soon)
 Järki Kettu Core is just the foundation. Over on my Patreon (Talvi's Den), I offer structured tiers to help you take your system to the next level. 
 
-### ⚡ Järki Kettu Pro
+### ⚡ Järki Kettu Pro (Coming Soon)
 *(Want just one specific feature? You can grab individual modules a-la-carte from my Ko-fi Shop!)*
 
 The definitive upgrade for your smart home. This tier gives you access to my entire suite of premium standalone modules, allowing you to build out a complete, professional-grade HVAC ecosystem:
@@ -110,10 +110,10 @@ The definitive upgrade for your smart home. This tier gives you access to my ent
 * **📊 Vertailukohta PRO (Envelope Analytics):** Upgrades the free benchmark engine to track physical Heat Loss Rate, Thermal Pressure (Stack Effect), and Room Imbalance Penalties.
 * **🛡️ Kilpi (Environmental Security):** Adds window-open proxy failsafes, cross-breeze weather alerts, and AQI-driven particulate scrubbing.
 
-### 🦊 The Fox Den Tier
+### 🦊 The Fox Den Tier (Coming Soon)
 For extreme power users and developers who want it all. This premium tier grants access to my **fully sanitized, monolithic production configuration**. This is the exact 2,000+ line backend YAML and Lovelace Dashboard code that runs my own home. It is designed as a raw, unfiltered masterclass in advanced Jinja templating, trigger-based sensors, and massive-scale smart home architecture. If you want to see exactly how a high-end, automated ecosystem is built and interconnected from the ground up, this is it.
 
-### 👑 Root Access ($2,000)
+### 👑 Root Access ($2,000) (Coming Soon)
 *So you've seen the Fox Den, and now you want to talk about it.* Every project needs a crazy tier. If you are actually wild enough to purchase this, I will personally get on a 1-on-1 call with you. We will talk through exactly how I implemented this system, review your specific home's floor plan and HVAC setup, and I will make custom architecture recommendations for your environment. I don't expect anyone to ever click this, but if you do, we're going to nerd out and build something awesome together. *(A friend joked that I should add a $10,000 "You Get Nothing" tier, but I figured I should at least offer a consulting call!)*
 
 ## 🤖 Development Transparency (AI-Assisted)
