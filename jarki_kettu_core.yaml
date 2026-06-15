@@ -130,7 +130,7 @@ automation:
       # Debounce to prevent short-cycling
       - platform: state
         entity_id: sensor.dynamic_smart_mode_demand
-        for: "00:05:00"
+        for: "00:01:00"
       # Catch manual toggle enablement
       - platform: state
         entity_id: input_boolean.hvac_auto_mode_director_enable
