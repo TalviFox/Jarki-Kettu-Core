@@ -4,7 +4,7 @@ I love seeing the community engage with this project, but I want to be upfront a
 
 ## 🦊 Järki Kettu Core Scope
 
-- **Core is Complete (No Feature Requests):** The core module is exactly what it is intended to be. The underlying philosophy, feature set, and architecture are essentially "set in stone" beyond critical bug fixes and compatibility updates.
+- **Core is Highly Stable (Most likely won't get new features):** The core module is exactly what it is intended to be. While I won't say the architecture is completely "set in stone" (only a Sith deals in absolutes!), the underlying philosophy and feature set are highly unlikely to see major additions beyond critical bug fixes and compatibility updates.
 - **Physics & Logic:** If you find a flaw in the psychrometric math, a better way to handle the physics, or a more efficient Jinja logic structure, I'm all ears! Feel free to poke at the math and the engine's stability.
 - **Why?** Keeping the core tightly focused ensures it remains stable and reliable. If you have ideas for expansive new features, I highly encourage you to fork the project, build your own add-on modules, or check out the Pro tiers on Patreon!
 
