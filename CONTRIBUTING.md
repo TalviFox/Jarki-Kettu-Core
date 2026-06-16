@@ -1,6 +1,6 @@
 # 🤝 Contributing to Järki Kettu
 
-I love seeing the community engage with this project, but I want to be upfront about the scope and contribution guidelines, especially concerning **Järki Kettu Core**.
+Id love to see the community engage with this project, but I want to be upfront about the scope and contribution guidelines, especially concerning **Järki Kettu Core**.
 
 ## 🦊 Järki Kettu Core Scope
 
