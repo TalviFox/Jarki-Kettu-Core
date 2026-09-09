@@ -1,6 +1,12 @@
 # ==============================================================================
 #  JÄRKI KETTU: VERTAILUKOHTA (UI Dashboard Cards)
 # ==============================================================================
+#  Copyright (c) 2025-2026 Talvi Fox | FoxDen Software. All rights reserved.
+#  License: PolyForm Noncommercial License 1.0.0
+#  License URL: https://polyformproject.org/licenses/noncommercial/1.0.0/
+#  Provided for personal, non-commercial use only.
+#  Commercial redistribution, bundling, or paid installation is strictly prohibited.
+# ==============================================================================
 #  SETUP INSTRUCTIONS:
 #  1. Go to your Dashboard -> Edit Dashboard -> Add Card -> Manual.
 #  2. Paste this exact code to create a clean grid showing your scores.
