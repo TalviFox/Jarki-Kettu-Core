@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jarki Kettu | Core</title>
+  
+  <meta name="description" content="Free, open-source building management logic for Home Assistant. Enforces deep thermal soaks, eliminates compressor short-cycling, and optimizes heat pump continuous runtimes.">
+  <meta name="keywords" content="Home Assistant, HVAC, Thermostat, Honeywell T9, T7900, Heat Pump, BMS, Building Physics, Energy Efficiency, Dehumidification, FoxDen Software">
+  <meta name="author" content="Talvi Fox / FoxDen Software">
+  <meta name="theme-color" content="#060911">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://jkc.foxdensoftware.dev/">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="assets/icon-192.png">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jkc.foxdensoftware.dev/">
+  <meta property="og:title" content="Järki Kettu Core | Thermodynamic HVAC Logic for Home Assistant">
+  <meta property="og:description" content="Stop short-cycling your HVAC equipment. Enforce deep thermal soaks, extract latent moisture, and protect heat pumps with commercial BMS logic in Home Assistant.">
+  <meta property="og:image" content="https://jkc.foxdensoftware.dev/assets/jarki_kettu_icon.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://jkc.foxdensoftware.dev/">
+  <meta name="twitter:title" content="Järki Kettu Core | The Clever Fox HVAC Engine">
+  <meta name="twitter:description" content="Commercial building physics for residential Home Assistant. Deep soaks, coast zones, and heat pump staging.">
+  <meta name="twitter:image" content="https://jkc.foxdensoftware.dev/assets/jarki_kettu_icon.png">
+
+  <!-- Google Fonts: Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Structured Data: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Järki Kettu Core",
+    "operatingSystem": "Home Assistant",
+    "applicationCategory": "HomeAutomationApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Talvi Fox",
+      "url": "https://wirefox.foxdensoftware.dev/"
+    },
+    "description": "Thermodynamic HVAC Building Management System package for Home Assistant enforcing deep soaks and coast zones."
+  }
+  </script>
+</head>
+<body data-theme="dual">
+
+  <!-- Sticky Site Navigation -->
+  <header class="site-header">
+    <div class="container site-nav">
+      <a href="#" class="nav-brand" aria-label="Järki Kettu Core Home">
+        <span class="brand-text">Järki Kettu <span class="gradient-word">Core</span></span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#physics" class="nav-link">Physics</a></li>
+        <li><a href="#simulator" class="nav-link">Simulator</a></li>
+        <li><a href="#comparison" class="nav-link">Comparison</a></li>
+        <li><a href="#installation" class="nav-link">Install</a></li>
+        <li><a href="#faq" class="nav-link">FAQ</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="https://github.com/TalviFox/Jarki-Kettu-Core" target="_blank" rel="noopener noreferrer" class="btn-github" title="View GitHub Repository">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span id="gh-release-tag" class="btn-text">GitHub</span>
+        </a>
+        <a href="https://ko-fi.com/talvisden" target="_blank" rel="noopener noreferrer" class="btn-kofi" title="Support on Ko-fi">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.529-2.059 3.015z"/>
+          </svg>
+          <span class="btn-text">Ko-fi</span>
+        </a>
+        <a href="https://www.patreon.com/cw/TalviFox" target="_blank" rel="noopener noreferrer" class="btn-patreon" title="Support on Patreon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.386.5C10.62.5 6.744 4.38 6.744 9.15c0 4.754 3.877 8.622 8.642 8.622 4.75 0 8.614-3.868 8.614-8.622C24 4.38 20.136.5 15.386.5zM0 .5v23h4.22V.5H0z"/>
+          </svg>
+          <span class="btn-text">Patreon</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section" data-theme-trigger="dual">
+    <div class="container">
+      
+      <div class="hero-emblem-wrap">
+        <img src="assets/jarki_kettu_icon.png" alt="Talvi Fox with Thermal Fire and Ice Halo" class="hero-emblem pixel-art" width="148" height="148">
+      </div>
+
+      <h1 class="hero-title">
+        Your Thermostat Is Lying to You.<br>
+        Meet <span class="heat">Järki</span> <span class="cool">Kettu</span>.
+      </h1>
+
+      <div class="hero-folklore-card">
+        <div class="hero-folklore-title">
+          <img src="assets/talvi_fox_cutout.png" alt="Talvi Fox" class="hero-folklore-img" width="22" height="22">
+          <strong>"Järki Kettu"</strong>
+          <span class="hero-folklore-sub">(Finnish: <em>The Clever Fox</em>)</span>
+        </div>
+        <p class="hero-folklore-text">
+          In Nordic folklore, while other creatures battle harsh winters and boiling summers with brute force, the fox understands snowpack depth, microclimates, and thermal inertia.
+        </p>
+      </div>
+
+      <p class="hero-subtitle">
+        Standard smart thermostats abuse your compressor with constant 5-minute short-cycles just to keep a static number on a screen. Järki Kettu Core transforms Home Assistant into a commercial <strong>BMS-style Building Management System</strong>, enforcing deep thermal soaks, optimizing heat pump staging, and drying your air.
+      </p>
+
+      <div class="hero-actions-row">
+        <a href="#installation" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Get Started Free</span>
+        </a>
+        <a href="#simulator" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+          <span>Test Vertailukohta Simulator</span>
+        </a>
+      </div>
+
+      <!-- Live Telemetry Cycling Ticker -->
+      <div class="telemetry-ticker-wrap" data-theme-trigger="telemetry">
+        <div class="telemetry-ticker-badge">
+          <span class="telemetry-live-dot"></span>
+          <span>LIVE TELEMETRY</span>
+        </div>
+        <div class="telemetry-ticker-track" id="telemetry-ticker">
+          <!-- Slide 1: HVAC Engine -->
+          <div class="telemetry-slide active">
+            <span class="telemetry-dot green"></span>
+            <span class="telemetry-label">HVAC Engine:</span>
+            <span class="telemetry-val">Deep Soak Active (Continuous Run)</span>
+          </div>
+          <!-- Slide 2: Coast Zone -->
+          <div class="telemetry-slide">
+            <span class="telemetry-dot cyan"></span>
+            <span class="telemetry-label">Dynamic Coast Zone:</span>
+            <span class="telemetry-val">68.0°F – 72.0°F (Passive Drift)</span>
+          </div>
+          <!-- Slide 3: MRT Physics -->
+          <div class="telemetry-slide">
+            <span class="telemetry-dot amber"></span>
+            <span class="telemetry-label">Mean Radiant Temp (MRT):</span>
+            <span class="telemetry-val">Building Envelope Saturated</span>
+          </div>
+          <!-- Slide 4: Cycle Wear -->
+          <div class="telemetry-slide">
+            <span class="telemetry-dot green"></span>
+            <span class="telemetry-label">Compressor Cycle Wear:</span>
+            <span class="telemetry-val">-78% Mitigated (30.3m Avg Run)</span>
+          </div>
+          <!-- Slide 5: Thermal Scavenger -->
+          <div class="telemetry-slide">
+            <span class="telemetry-dot cyan"></span>
+            <span class="telemetry-label">Thermal Scavenger:</span>
+            <span class="telemetry-val">Active (Offsetting 755W Load)</span>
+          </div>
+          <!-- Slide 6: Latent Dehumidifier -->
+          <div class="telemetry-slide">
+            <span class="telemetry-dot green"></span>
+            <span class="telemetry-label">Latent Dehumidifier:</span>
+            <span class="telemetry-val">Active (Target 55% RH Latent Removal)</span>
+          </div>
+        </div>
+        <div class="telemetry-ticker-indicators" id="telemetry-dots">
+          <button class="ticker-dot active" data-index="0" aria-label="Slide 1"></button>
+          <button class="ticker-dot" data-index="1" aria-label="Slide 2"></button>
+          <button class="ticker-dot" data-index="2" aria-label="Slide 3"></button>
+          <button class="ticker-dot" data-index="3" aria-label="Slide 4"></button>
+          <button class="ticker-dot" data-index="4" aria-label="Slide 5"></button>
+          <button class="ticker-dot" data-index="5" aria-label="Slide 6"></button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Building Physics Section -->
+  <section id="physics" class="physics-section" data-theme-trigger="frost">
+    <div class="container">
+      
+      <div class="section-header">
+        <span class="section-tag frost">The Thermodynamics</span>
+        <h2 class="section-title">The Science: Why Your Thermostat Is Fighting Your House</h2>
+        <p class="section-subtitle">
+          Most residential thermostats react exclusively to air temperature across razor-thin deadbands (±0.5°F). Here is the actual building physics behind why this causes high wear, clammy humidity, and wasted energy.
+        </p>
+      </div>
+
+      <div class="physics-grid">
+        <!-- Card 1: Latent Heat & Dehumidification (Fire & Water) -->
+        <div class="physics-card frost">
+          <div class="physics-icon-wrap dual">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-ember" title="Sensible Heat">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-frost" title="Latent Moisture">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+            </svg>
+          </div>
+          <h3 class="physics-card-title">Latent Heat & Dehumidification</h3>
+          <p class="physics-card-body">
+            Air conditioning is not just cooling air; it is removing moisture. An evaporator coil requires <strong>10 to 15 minutes</strong> of continuous runtime just to cool down below the dewpoint and start condensing water into the drain pan.
+          </p>
+          <div class="physics-highlight-box">
+            <strong>The Short-Cycle Trap:</strong> When your AC short-cycles for 6 minutes to hold exactly 72°F, it never extracts latent water. You end up with a 72°F house at 65% humidity, a cold, clammy swamp.
+          </div>
+        </div>
+
+        <!-- Card 2: Thermal Mass vs Air (Fire & Snowflake) -->
+        <div class="physics-card ember">
+          <div class="physics-icon-wrap dual-thermal">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-ember" title="Summer Heat Storage">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-frost" title="Winter Thermal Inertia">
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <line x1="12" y1="2" x2="12" y2="22"></line>
+              <path d="m20 16-4-4 4-4"></path>
+              <path d="m4 8 4 4-4 4"></path>
+              <path d="m16 4-4 4-4-4"></path>
+              <path d="m8 20 4-4 4 4"></path>
+            </svg>
+          </div>
+          <h3 class="physics-card-title">Thermal Mass & Mean Radiant Temp</h3>
+          <p class="physics-card-body">
+            Air changes temperature within seconds, but walls, floorboards, and drywall take hours to absorb or radiate thermal energy. Standard thermostats condition only the air, so unconditioned walls immediately radiate heat back into the room.
+          </p>
+          <div class="physics-highlight-box">
+            <strong>The Deep Soak Solution:</strong> Järki Kettu dynamically forces continuous runs that condition the physical structure. Once your thermal mass is soaked, your home coasts passively for hours with the HVAC resting.
+          </div>
+        </div>
+
+        <!-- Card 3: Setpoint Walker & Heat Pumps (Heat & Measuring Tape) -->
+        <div class="physics-card emerald">
+          <div class="physics-icon-wrap dual-walker">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-amber" title="Thermal Output">
+              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-emerald" title="Micro-Step Measurement">
+              <path d="M21.3 8.7 8.7 21.3c-1 1-2.5 1-3.4 0l-2.6-2.6c-1-1-1-2.5 0-3.4L15.3 2.7c1-1 2.5-1 3.4 0l2.6 2.6c1 1 1 2.5 0 3.4Z"></path>
+              <path d="m14.5 3.5 2 2"></path>
+              <path d="m11.5 6.5 3 3"></path>
+              <path d="m8.5 9.5 2 2"></path>
+              <path d="m5.5 12.5 3 3"></path>
+            </svg>
+          </div>
+          <h3 class="physics-card-title">Heat Pump Setpoint Walker</h3>
+          <p class="physics-card-body">
+            Heat pumps are built for long, predictable, steady-state cycles. If you make a sudden 3°F setpoint jump, residential thermostats panic and trigger expensive 10kW auxiliary resistive heating strips, spiking your electric bill.
+          </p>
+          <div class="physics-highlight-box">
+            <strong>Micro-Stepping Logic:</strong> Järki Kettu's Setpoint Walker nudges the thermostat setpoint in gentle 1.0°F intervals, keeping the compressor running at optimal COP while locking out auxiliary heat strips.
+          </div>
+        </div>
+
+        <!-- Card 4: Customer Psychology vs Engineering (Brain & Gear) -->
+        <div class="physics-card ember">
+          <div class="physics-icon-wrap dual-psych">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-purple" title="Human Psychology">
+              <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"></path>
+              <path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"></path>
+              <path d="M12 5v13"></path>
+              <path d="M15.5 13a3.5 3.5 0 0 0-3.5 3.5"></path>
+              <path d="M8.5 13a3.5 3.5 0 0 1 3.5 3.5"></path>
+            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-ember" title="Hardware Specs & Machinery">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </div>
+          <h3 class="physics-card-title">Customer Psychology vs. Specs</h3>
+          <p class="physics-card-body">
+            Compressor manufacturers explicitly specify long runtimes for proper refrigerant oil return and motor cooling. Why do smart thermostats ignore this? <strong>Customer support avoidance.</strong>
+          </p>
+          <div class="physics-highlight-box">
+            <strong>The Volume Dial Fallacy:</strong> If a homeowner sets 72°F and sees 74°F while the system coasts, they call tech support. Brands intentionally sacrifice your hardware's lifespan just to display a static number.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Interactive Vertailukohta Thermal Envelope & Cycle Simulator -->
+  <section id="simulator" class="calculator-section" data-theme-trigger="coast">
+    <div class="container">
+      
+      <div class="section-header">
+        <span class="section-tag emerald">Envelope Physics & Adaptive Drift</span>
+        <h2 class="section-title">The "Thermal Battery" Simulator</h2>
+        <p class="section-subtitle">
+          When equipment reaches cut-out, how fast does your building envelope drift? Building science evaluates this as <strong>operative temperature ramp rate</strong>: the definitive indicator of structural thermal capacitance, air infiltration, and cycle efficiency.
+        </p>
+      </div>
+
+      <!-- Controls Toolbar (Units & Season) -->
+      <div class="sim-toolbar">
+        <div class="sim-toolbar-group">
+          <span class="sim-toolbar-label">Season / Mode:</span>
+          <div class="sim-toggle-pill-group" id="sim-season-group">
+            <button type="button" class="sim-pill-btn active" data-season="heat">🔥 Heating (Envelope Loss)</button>
+            <button type="button" class="sim-pill-btn" data-season="cool">❄️ Cooling (Envelope Gain)</button>
+          </div>
+        </div>
+
+        <div class="sim-toolbar-group">
+          <span class="sim-toolbar-label">Units:</span>
+          <div class="sim-toggle-pill-group" id="sim-unit-group">
+            <button type="button" class="sim-pill-btn active" data-unit="f">°F / hr</button>
+            <button type="button" class="sim-pill-btn" data-unit="c">°C / hr</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-card sim-card">
+        <!-- Controls Column -->
+        <div class="calc-sliders-col sim-controls-col">
+          <div class="sim-col-header">
+            <h3>Building Envelope & Equipment Profile</h3>
+            <p>Adjust your envelope's passive drift rate to examine transient short-cycling versus steady-state thermal mass utilization.</p>
+          </div>
+
+          <!-- Main Slider: Whole Home Drift Rate -->
+          <div class="calc-control-group">
+            <div class="calc-label-row">
+              <label for="calc-drift-rate" id="label-drift-title">Envelope Operative Drift Rate (dT/dt)</label>
+              <span id="val-drift-rate" class="calc-val-pill">1.4°F / hr</span>
+            </div>
+            <input type="range" id="calc-drift-rate" class="calc-slider" min="0.2" max="3.5" step="0.1" value="1.4">
+            
+            <!-- Envelope Classification Badge -->
+            <div id="calc-envelope-badge" class="sim-envelope-badge average">
+              🏡 Standard Building Envelope (Moderate Infiltration)
+            </div>
+
+            <div class="calc-sub-hint" id="calc-drift-hint">
+              Passive operative decay during compressor cut-out.
+            </div>
+          </div>
+
+          <!-- Equipment Tonnage Selector -->
+          <div class="calc-control-group">
+            <div class="calc-label-row">
+              <label>Equipment Rated Capacity (Sensible & Latent)</label>
+              <span id="val-capacity-tons" class="calc-val-pill frost">3.0 Ton (36k BTU)</span>
+            </div>
+            <div class="sim-capacity-grid" id="sim-capacity-buttons">
+              <button type="button" class="sim-cap-btn" data-tons="2.0">2.0 Ton <small>(24k BTU/h)</small></button>
+              <button type="button" class="sim-cap-btn active" data-tons="3.0">3.0 Ton <small>(36k BTU/h)</small></button>
+              <button type="button" class="sim-cap-btn" data-tons="4.0">4.0 Ton <small>(48k BTU/h)</small></button>
+              <button type="button" class="sim-cap-btn" data-tons="5.0">5.0 Ton <small>(60k BTU/h)</small></button>
+            </div>
+            <div class="calc-sub-hint">
+              Net Operative Recovery Rate: <strong id="sim-recovery-speed">+2.1°F / hr</strong> above envelope infiltration.
+            </div>
+          </div>
+
+
+          <!-- Educational Callout Box -->
+          <div class="sim-science-box">
+            <div class="sim-science-title" id="sim-science-title">🔬 Building Science: Sensible Heat vs. Latent Capacity</div>
+            <p class="sim-science-p" id="sim-science-p">
+              HVAC engineering ratings assume continuous steady-state operation. When a thermostat enforces a narrow throttling range, the evaporator coil operates primarily in sensible cooling, cycling off before reaching saturation to extract latent moisture. Deep thermal soaks charge the structural thermal mass so the building envelope can float passively.
+            </p>
+          </div>
+
+          <!-- The Home Assistant Gateway Banner (Balances Left Column) -->
+          <div class="sim-gateway-callout">
+            <div class="sim-gateway-text">
+              <strong>Want to quantify your home's real decay rate?</strong>
+              <span>Järki Kettu's companion diagnostic engine (<em>Vertailukohta</em>) calculates this curve automatically from your existing sensors in Home Assistant.</span>
+            </div>
+            <a href="#installation" class="btn btn-secondary sim-gateway-btn">
+              <span>View HA YAML Logic</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Visual Comparison & Novelty Waveform Column -->
+        <div class="calc-results-col sim-results-col">
+          
+          <!-- System Group 1: Standard Thermostat (Top Two Red Cards) -->
+          <div class="sim-system-group standard">
+            <div class="sim-system-header bad">
+              <h4>Standard Factory Thermostat</h4>
+              <span class="sim-system-sub">Narrow Throttling Range (±0.5°F / ±0.3°C Differential)</span>
+            </div>
+
+            <!-- Red Card 1: Metrics -->
+            <div class="sim-behavior-card standard wide">
+              <div class="sim-stats-grid">
+                <div class="sim-stat-row">
+                  <span class="sim-stat-label">Cyclic Frequency (CPH):</span>
+                  <span class="sim-stat-val bad" id="stat-std-cph">1.7 CPH <small>(40 starts / day)</small></span>
+                </div>
+                
+                <div class="sim-stat-row">
+                  <span class="sim-stat-label">Transient Duty Profile:</span>
+                  <span class="sim-stat-val" id="stat-std-cycle">14m On / 21m Float</span>
+                </div>
+
+                <div class="sim-stat-row">
+                  <span class="sim-stat-label" id="label-std-third">Latent Capacity Degradation:</span>
+                  <span class="sim-tag bad" id="stat-std-dehum">🔴 Incomplete Coil Saturation</span>
+                </div>
+
+                <div class="sim-stat-row">
+                  <span class="sim-stat-label">Part-Load Factor (CD Penalty):</span>
+                  <span class="sim-tag bad">⚡ High Inrush Torque Spikes</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Red Card 2: 24h Duty Timeline -->
+            <div class="sim-timeline-card standard">
+              <div class="sim-timeline-card-header">
+                <div>
+                  <div class="sim-timeline-card-title">Standard Duty Timeline</div>
+                  <div class="sim-timeline-card-sub"><span id="waveform-std-count">40</span> transient short-cycles per 24h</div>
+                </div>
+                <span class="sim-cph-badge bad" id="timeline-std-cph">1.7 CPH</span>
+              </div>
+              <div class="sim-timeline-bar" id="waveform-standard" title="Standard Thermostat short cycles"></div>
+              <div class="sim-timeline-ticks">
+                <span>00:00</span>
+                <span>06:00</span>
+                <span>12:00</span>
+                <span>18:00</span>
+                <span>24:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- System Group 2: Järki Kettu Core (Bottom Two Green Cards) -->
+          <div class="sim-system-group jk">
+            <div class="sim-system-header good">
+              <h4>Järki Kettu Core Management</h4>
+              <span class="sim-system-sub">Adaptive Coast Zone (Extended Drift Band & Deep Thermal Soak)</span>
+            </div>
+
+            <!-- Green Card 1: Metrics -->
+            <div class="sim-behavior-card jk wide">
+              <div class="sim-stats-grid">
+                <div class="sim-stat-row">
+                  <span class="sim-stat-label">Proposed Core CPH:</span>
+                  <span class="sim-stat-val good" id="stat-jk-cph">0.3 CPH <small>(8 starts / day • -80%)</small></span>
+                </div>
+
+                <div class="sim-stat-row">
+                  <span class="sim-stat-label">Steady-State Duty Profile:</span>
+                  <span class="sim-stat-val" id="stat-jk-cycle">71m On / 107m Float</span>
+                </div>
+
+                <div class="sim-stat-row">
+                  <span class="sim-stat-label" id="label-jk-third">Sensible Heat Ratio (SHR):</span>
+                  <span class="sim-tag good" id="stat-jk-dehum">🟢 Continuous Latent Extraction</span>
+                </div>
+
+                <div class="sim-stat-row">
+                  <span class="sim-stat-label">Equipment Longevity Factor:</span>
+                  <span class="sim-tag good">🛡️ Steady-State COP Protection</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Green Card 2: 24h Duty Timeline -->
+            <div class="sim-timeline-card jk">
+              <div class="sim-timeline-card-header">
+                <div>
+                  <div class="sim-timeline-card-title">Järki Kettu Core Timeline</div>
+                  <div class="sim-timeline-card-sub"><span id="waveform-jk-count">8</span> deep steady-state soaks per 24h</div>
+                </div>
+                <span class="sim-cph-badge good" id="timeline-jk-cph">Proposed 0.3 CPH</span>
+              </div>
+              <div class="sim-timeline-bar" id="waveform-jk" title="Järki Kettu deep thermal soaks"></div>
+              <div class="sim-timeline-ticks">
+                <span>00:00</span>
+                <span>06:00</span>
+                <span>12:00</span>
+                <span>18:00</span>
+                <span>24:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulation Disclaimer Note (Full Width Card Footnote) -->
+        <div class="sim-disclaimer-note">
+          <span class="sim-disclaimer-icon">ℹ️</span>
+          <p>
+            <strong>* Notice:</strong> These figures are simulated thermodynamic averages. Your actual cycle times, decay rates, and recovery speeds will vary depending on your home's insulation, air leakage, HVAC sizing, and local climate.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Matrix Section -->
+  <section id="comparison" class="comparison-section" data-theme-trigger="ember">
+    <div class="container">
+      
+      <div class="section-header">
+        <span class="section-tag ember">Architecture Breakdown</span>
+        <h2 class="section-title">The High Cost of a Static Number</h2>
+        <p class="section-subtitle">
+          Holding a rigid number on the wall sacrifices a $15,000 piece of equipment for a false sense of control. See the difference.
+        </p>
+      </div>
+
+      <div class="comparison-card">
+        <div class="comparison-grid">
+          
+          <!-- Bad Side: Native Thermostats -->
+          <div class="comparison-col bad-side">
+            <div class="comparison-tag bad">Standard Smart Thermostats (Ecobee, Nest, Honeywell)</div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Reactive Air-Only Short Cycling</h3>
+            <p style="font-size: 0.92rem; color: var(--text-muted);">
+              Tuned for customer perception and volume-dial simplicity.
+            </p>
+
+            <ul class="comparison-list">
+              <li class="comparison-item cross">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <span><strong>Razor-thin deadbands (±0.5°F)</strong> cause 6 to 10 abrupt compressor start/stops every hour.</span>
+              </li>
+              <li class="comparison-item cross">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <span><strong>Shallow runtimes</strong> never allow evaporator coils to reach dewpoint; leaves indoor air muggy at 60%+ RH.</span>
+              </li>
+              <li class="comparison-item cross">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <span><strong>Conditions only ambient air.</strong> Heavy thermal mass of walls and furniture immediately forces the unit back on.</span>
+              </li>
+              <li class="comparison-item cross">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <span><strong>Triggers expensive 10kW auxiliary heat strips</strong> on sudden setpoint recovery jumps in heat pumps.</span>
+              </li>
+              <li class="comparison-item cross">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <span><strong>Massive electrical inrush current</strong> degrades contactors, dual-run capacitors, and compressor windings.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Good Side: Jarki Kettu -->
+          <div class="comparison-col good-side">
+            <div class="comparison-tag good">Järki Kettu Core (Home Assistant BMS)</div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 8px;">Thermodynamic Deep Soak Management</h3>
+            <p style="font-size: 0.92rem; color: var(--text-muted);">
+              Tuned for physical building thermodynamics and HVAC equipment longevity.
+            </p>
+
+            <ul class="comparison-list">
+              <li class="comparison-item check">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span><strong>Controlled Coast Zones (2° to 4°F gap)</strong> enforce 2 to 3 long, steady-state runtimes per day.</span>
+              </li>
+              <li class="comparison-item check">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span><strong>Sustained 20+ minute runs</strong> pull gallons of latent moisture out of the air, creating crisp, breathable 45% RH.</span>
+              </li>
+              <li class="comparison-item check">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span><strong>Soaks the physical thermal envelope.</strong> Walls and floors stay conditioned, allowing long passive rest periods.</span>
+              </li>
+              <li class="comparison-item check">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span><strong>Setpoint Walker staging</strong> nudges target temperatures gradually, strictly locking out expensive auxiliary heat.</span>
+              </li>
+              <li class="comparison-item check">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span><strong>Extends equipment operational life by years</strong> while cutting cumulative startup energy spikes.</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Installation Tabs Section -->
+  <section id="installation" class="install-section" data-theme-trigger="telemetry">
+    <div class="container">
+      
+      <div class="section-header">
+        <span class="section-tag emerald">Quick Deployment</span>
+        <h2 class="section-title">Install in Minutes on Home Assistant</h2>
+        <p class="section-subtitle">
+          Pure YAML packages. No custom components, external python runners, or third-party cloud connections required for Core.
+        </p>
+      </div>
+
+      <div class="install-tabs-nav">
+        <button class="install-tab-btn active" data-tab="tab-core">Core Automation Package</button>
+        <button class="install-tab-btn" data-tab="tab-dashboard">Lovelace Dashboard UI</button>
+        <button class="install-tab-btn" data-tab="tab-vertailukohta">Vertailukohta Benchmark</button>
+        <button class="install-tab-btn" data-tab="tab-hardware">Hardware & Sensors</button>
+      </div>
+
+      <!-- Tab Pane 1: Core -->
+      <div id="tab-core" class="install-pane active">
+        <div class="install-step-list">
+          <div class="install-step">
+            <span class="step-num">1</span>
+            <div class="step-content">
+              <h4>Download the Core Package</h4>
+              <p>Place <code>jarki_kettu_core.yaml</code> into your Home Assistant <code>packages/</code> folder. In the HA terminal or SSH:</p>
+              
+              <div class="terminal-command-box">
+                <span class="terminal-prefix">$</span>
+                <code class="terminal-code" id="cmd-core-dl">mkdir -p /config/packages && wget -O /config/packages/jarki_kettu_core.yaml https://raw.githubusercontent.com/TalviFox/Jarki-Kettu-Core/main/jarki_kettu_core.yaml</code>
+                <button class="btn-copy" data-target="#cmd-core-dl" aria-label="Copy Command">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="install-step">
+            <span class="step-num">2</span>
+            <div class="step-content">
+              <h4>Map Your Specific Entities</h4>
+              <p>Open <code>jarki_kettu_core.yaml</code> in Studio Code Server or any text editor. Run a Find & Replace for your thermostat and sensor entities:</p>
+              <ul style="margin-left: 20px; font-size: 0.92rem; color: var(--text-secondary); line-height: 1.8;">
+                <li><code>climate.YOUR_THERMOSTAT</code> → Your physical thermostat entity</li>
+                <li><code>sensor.YOUR_ROOM_SENSOR_1</code> → Your indoor room sensors</li>
+                <li><code>sensor.YOUR_OUTDOOR_TEMP_SENSOR</code> → <strong>(Recommended)</strong> Local outdoor temperature sensor (Shelly/Zigbee)</li>
+                <li><code>weather.YOUR_LOCAL_WEATHER</code> → <em>(Alternative)</em> Cloud weather provider (e.g., <code>weather.home</code>)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="install-step">
+            <span class="step-num">3</span>
+            <div class="step-content">
+              <h4>Clear Native Schedules on Wall Thermostat</h4>
+              <p>On your physical wall unit, delete internal timers and schedules. Set the fan mode to <strong>Circulate</strong> (if supported). Reload Home Assistant YAML configurations to let Järki Kettu drive.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Pane 2: Dashboard -->
+      <div id="tab-dashboard" class="install-pane">
+        <div class="install-step-list">
+          <div class="install-step">
+            <span class="step-num">1</span>
+            <div class="step-content">
+              <h4>Install card_mod (HACS)</h4>
+              <p>For transparent cards and real-time state glow effects, install <strong>card_mod</strong> by Thomas Lovén via HACS (Frontend tab), then reload your browser cache.</p>
+            </div>
+          </div>
+
+          <div class="install-step">
+            <span class="step-num">2</span>
+            <div class="step-content">
+              <h4>Add Manual Lovelace Card</h4>
+              <p>In Home Assistant, navigate to your dashboard, click <strong>Edit Dashboard</strong> → <strong>Add Card</strong> → <strong>Manual</strong>. Copy the Lovelace card snippet:</p>
+
+              <div class="terminal-command-box">
+                <span class="terminal-prefix">YAML</span>
+                <code class="terminal-code" id="cmd-card-link">https://raw.githubusercontent.com/TalviFox/Jarki-Kettu-Core/main/jarki_kettu_core_ui_dashboard.yaml</code>
+                <button class="btn-copy" data-copy="https://raw.githubusercontent.com/TalviFox/Jarki-Kettu-Core/main/jarki_kettu_core_ui_dashboard.yaml" aria-label="Copy Raw Link">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy URL</span>
+                </button>
+              </div>
+
+              <!-- Interactive Simulated Lovelace Card (No Screenshots Needed!) -->
+              <div style="margin-top: 24px;">
+                <div style="margin-bottom: 12px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                    <h5 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">Interactive Lovelace Card Preview</h5>
+                    <span style="font-size: 0.78rem; color: var(--brand-frost-light); font-family: var(--font-mono);">Live HTML/CSS Simulation</span>
+                  </div>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                    <em>Interactive Simulation: Demonstrates the layout, logic, and entity flow of the YAML package. Visual appearance in your dashboard will adapt to your local Home Assistant theme and <code>card_mod</code> configuration.</em>
+                  </p>
+                </div>
+                
+                <div class="ha-mock-wrapper">
+                  <div class="ha-mock-topbar">
+                    <div class="ha-topbar-brand">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
+                      </svg>
+                      <span>Home Assistant • Lovelace UI</span>
+                    </div>
+                    <span class="ha-badge-pill">Live Simulated Card</span>
+                  </div>
+
+                  <div class="ha-mock-body">
+                    <!-- Thermostat Card -->
+                    <div class="ha-card-unit">
+                      <div class="ha-thermostat-display">
+                        <div class="ha-dial-ring" id="ha-mock-dial">
+                          <span class="ha-dial-mode" id="ha-mock-dial-mode">Cooling</span>
+                          <span class="ha-dial-target" id="ha-mock-dial-target">72°</span>
+                          <span class="ha-dial-current">Currently 73.5°F</span>
+                        </div>
+                        <div class="ha-mode-selector">
+                          <button class="ha-mode-btn" id="btn-mode-heat" type="button">Heat</button>
+                          <button class="ha-mode-btn active cool" id="btn-mode-cool" type="button">Cool</button>
+                          <button class="ha-mode-btn" id="btn-mode-off" type="button">Off</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Entities Card -->
+                    <div class="ha-card-unit">
+                      <div class="ha-entities-header">
+                        <span>Dynamic Auto-Switcher</span>
+                        <span style="font-size: 0.78rem; color: var(--brand-frost); font-family: var(--font-mono);">Core Logic</span>
+                      </div>
+                      
+                      <div class="ha-entity-row">
+                        <div class="ha-entity-left">
+                          <svg class="ha-entity-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                          </svg>
+                          <span>Enable Coast Zone Logic</span>
+                        </div>
+                        <div class="ha-toggle-switch active" id="ha-coast-toggle" title="Click to test toggle">
+                          <div class="ha-toggle-knob"></div>
+                        </div>
+                      </div>
+
+                      <div class="ha-entity-row">
+                        <div class="ha-entity-left">
+                          <svg class="ha-entity-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                          </svg>
+                          <span>Heat System Type</span>
+                        </div>
+                        <span class="ha-entity-pill" style="color: var(--brand-ember-light);">Heat Pump</span>
+                      </div>
+
+                      <div class="ha-entity-row">
+                        <div class="ha-entity-left">
+                          <svg class="ha-entity-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path>
+                          </svg>
+                          <span>Target Heat / Cool</span>
+                        </div>
+                        <span class="ha-entity-pill">68°F / 72°F</span>
+                      </div>
+
+                      <div class="ha-entity-row">
+                        <div class="ha-entity-left">
+                          <svg class="ha-entity-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                          </svg>
+                          <span>House Temp Average</span>
+                        </div>
+                        <span class="ha-entity-pill" style="color: #67e8f9;">73.4°F</span>
+                      </div>
+                    </div>
+
+                    <!-- Jinja Markdown Card -->
+                    <div class="ha-card-unit ha-card-mod-box">
+                      <h4>Active Coast Zone</h4>
+                      <p style="color: var(--text-secondary); font-size: 0.88rem;">
+                        The system will rest while the house average is between <strong>67.0°F</strong> and <strong>74.0°F</strong>.
+                      </p>
+                      <div class="ha-status-callout" id="ha-mock-status-callout">
+                        ❄️ <strong>Cooling Active:</strong> Driving house average down to 72.0°F.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Pane 3: Vertailukohta -->
+      <div id="tab-vertailukohta" class="install-pane">
+        <div class="install-step-list">
+          <div class="install-step">
+            <span class="step-num">1</span>
+            <div class="step-content">
+              <h4>Download Vertailukohta Logic</h4>
+              <p>Download the benchmark calculations package into your <code>packages/</code> folder:</p>
+
+              <div class="terminal-command-box">
+                <span class="terminal-prefix">$</span>
+                <code class="terminal-code" id="cmd-vk-dl">mkdir -p /config/packages && wget -O /config/packages/vertailukohta_logic.yaml https://raw.githubusercontent.com/TalviFox/Jarki-Kettu-Core/main/vertailukohta_logic.yaml</code>
+                <button class="btn-copy" data-target="#cmd-vk-dl" aria-label="Copy Command">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="install-step">
+            <span class="step-num">2</span>
+            <div class="step-content">
+              <h4>Add the Diagnostic Dashboard Card</h4>
+              <p>Open your Lovelace Dashboard, add a <strong>Manual</strong> card, and paste the code from <code>vertailukohta_lovelace_ui.yaml</code>. Your Comfort and Efficiency indexes will begin scoring in real time.</p>
+
+              <!-- Simulated Vertailukohta Lovelace Card -->
+              <div style="margin-top: 24px;">
+                <div style="margin-bottom: 12px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                    <h5 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">Vertailukohta Lovelace Card Preview</h5>
+                    <span style="font-size: 0.78rem; color: var(--brand-emerald-light); font-family: var(--font-mono);">Segmented Dual Gauges</span>
+                  </div>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                    <em>Interactive Simulation: Demonstrates the layout, logic, and entity flow of the YAML package. Visual appearance in your dashboard will adapt to your local Home Assistant theme and <code>card_mod</code> configuration.</em>
+                  </p>
+                </div>
+
+                <div class="ha-mock-wrapper">
+                  <div class="ha-mock-topbar">
+                    <div class="ha-topbar-brand">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3z"/>
+                      </svg>
+                      <span>Vertailukohta • Lovelace UI Card</span>
+                    </div>
+                    <span class="ha-badge-pill" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16,185,129,0.3);">Diagnostics Active</span>
+                  </div>
+
+                  <div class="ha-mock-body">
+                    <!-- card_mod Markdown Card -->
+                    <div class="ha-card-unit ha-card-mod-box">
+                      <h3 style="font-size: 1.05rem; margin-bottom: 8px; color: #ffffff; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 6px;">
+                        📊 Performance & Comfort
+                      </h3>
+                      <p style="font-size: 0.92rem; color: #f1f5f9; margin-bottom: 4px;">
+                        <strong>24h Status:</strong> 🟢 Comf: <span style="color: #0f9d58; font-weight: bold;">96.2%</span> <span style="color: #64748b;">|</span> 🟢 Eff: <span style="color: #0f9d58; font-weight: bold;">88.4%</span>
+                      </p>
+                      <p style="font-size: 0.92rem; color: #f1f5f9;">
+                        <strong>7-Day Trend:</strong> 🟢 Comf: <span style="color: #0f9d58; font-weight: bold;">94.8%</span> <span style="color: #64748b;">|</span> 🟢 Eff: <span style="color: #0f9d58; font-weight: bold;">89.1%</span>
+                      </p>
+                    </div>
+
+                    <!-- Dual Segmented Radial Gauges -->
+                    <div class="ha-card-unit">
+                      <div class="ha-gauge-grid">
+                        <!-- 24h Comfort Gauge -->
+                        <div class="ha-gauge-item">
+                          <svg width="140" height="90" viewBox="0 0 200 125">
+                            <path d="M 20 100 A 80 80 0 0 1 114 26" fill="none" stroke="#db4437" stroke-width="16" stroke-linecap="round"/>
+                            <path d="M 114 26 A 80 80 0 0 1 156 46" fill="none" stroke="#ffa600" stroke-width="16"/>
+                            <path d="M 156 46 A 80 80 0 0 1 173 66" fill="none" stroke="#f4b400" stroke-width="16"/>
+                            <path d="M 173 66 A 80 80 0 0 1 180 100" fill="none" stroke="#0f9d58" stroke-width="16" stroke-linecap="round"/>
+                            <line x1="100" y1="100" x2="168" y2="82" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+                            <circle cx="100" cy="100" r="7" fill="#ffffff"/>
+                          </svg>
+                          <span class="ha-gauge-val" style="color: #0f9d58;">96.2%</span>
+                          <span class="ha-gauge-title">24h Comfort</span>
+                        </div>
+
+                        <!-- 24h Efficiency Gauge -->
+                        <div class="ha-gauge-item">
+                          <svg width="140" height="90" viewBox="0 0 200 125">
+                            <path d="M 20 100 A 80 80 0 0 1 100 20" fill="none" stroke="#db4437" stroke-width="16" stroke-linecap="round"/>
+                            <path d="M 100 20 A 80 80 0 0 1 148 37" fill="none" stroke="#ffa600" stroke-width="16"/>
+                            <path d="M 148 37 A 80 80 0 0 1 168 62" fill="none" stroke="#f4b400" stroke-width="16"/>
+                            <path d="M 168 62 A 80 80 0 0 1 180 100" fill="none" stroke="#0f9d58" stroke-width="16" stroke-linecap="round"/>
+                            <line x1="100" y1="100" x2="162" y2="72" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+                            <circle cx="100" cy="100" r="7" fill="#ffffff"/>
+                          </svg>
+                          <span class="ha-gauge-val" style="color: #0f9d58;">88.4%</span>
+                          <span class="ha-gauge-title">24h Efficiency</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Pane 4: Hardware -->
+      <div id="tab-hardware" class="install-pane">
+        <div class="install-step-list">
+          <div class="install-step">
+            <span class="step-num">1</span>
+            <div class="step-content">
+              <h4>Thermostat Compatibility</h4>
+              <p>Works with any modern 24V smart thermostat exposed to Home Assistant. Tested primarily on the <strong>Honeywell T9</strong> and <strong>Venstar (T7900)</strong> platforms. All future updates focus on the Venstar T7900 and open-API thermostat standards.</p>
+            </div>
+          </div>
+
+          <div class="install-step">
+            <span class="step-num">2</span>
+            <div class="step-content">
+              <h4>Recommended Temperature & Humidity Sensors</h4>
+              <p>For indoor telemetry, Shelly ZB e-ink displays provide reliable localized room monitoring. Standard outdoor Shelly or Zigbee environmental sensors supply outdoor reference values.</p>
+            </div>
+          </div>
+
+          <div class="install-step">
+            <span class="step-num">3</span>
+            <div class="step-content">
+              <h4>Local-Push Integrations (Zero Cloud Lag)</h4>
+              <p>When connecting Honeywell or compatible thermostats, use the <strong>HomeKit Device</strong> integration in Home Assistant. This enables immediate local-push state changes with zero cloud roundtrips.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ Accordion Section -->
+  <section id="faq" class="faq-section" data-theme-trigger="frost">
+    <div class="container">
+      
+      <div class="section-header">
+        <span class="section-tag frost">Questions & Answers</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">
+          Everything you need to know about thermal deadbands, equipment safety, and building physics.
+        </p>
+      </div>
+
+      <div class="faq-list">
+        
+        <!-- Q1 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Why does the temperature on my wall thermostat drift by 1 to 2 degrees?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer">
+            <p>
+              That is the intentional <strong>Coast Zone</strong>. Traditional thermostats keep the number static by rapidly short-cycling, which conditions only the air and abuses your compressor. Järki Kettu executes deep thermal soaks that condition your home's structural mass (walls, floors, drywall). Once saturated, the house coasts naturally for hours without needing the HVAC equipment to restart.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Will this increase my monthly electric bill?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer">
+            <p>
+              In practice, no. Steady-state, continuous compressor runtimes operate at much higher mechanical efficiency (COP) than frequent stop-and-start cycles. Furthermore, long runs eliminate the repeated high-amperage inrush currents that occur every time a compressor starts. For heat pumps, the built-in Setpoint Walker specifically prevents the system from triggering expensive 10kW auxiliary resistive heating elements.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Does Järki Kettu require HACS or custom Python integrations?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer">
+            <p>
+              No! Järki Kettu Core is written in pure, native Home Assistant YAML and Jinja2 templating. It runs entirely on native Home Assistant primitives with zero external Python runners or cloud dependencies. The only optional HACS component is Thomas Lovén's <code>card_mod</code> if you choose to deploy the transparent dashboard UI card.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>What happens if Home Assistant reboots or a sensor drops offline?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Järki Kettu features built-in <strong>Graceful Degradation</strong>. If your room sensors or Home Assistant instance go offline, the automation idles safely and your physical wall thermostat automatically resumes control using its internal hardware logic and temperature sensors.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Can I use this with Heat Pumps and Mini-Splits?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Yes! Heat pumps benefit the most from Järki Kettu's thermodynamics. Heat pumps are engineered for long, continuous, steady-state runtimes. The integrated Setpoint Walker steps the target temperature gradually, ensuring your compressor does the heavy lifting while locking out expensive emergency strip heat.
+            </p>
+          </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Why did you build this instead of relying on Ecobee or Nest?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer">
+            <p>
+              Nest and Ecobee utilize rigid, hard-coded deadbands designed to comfort consumer psychology rather than respect HVAC engineering specs. After suffering through Ecobee cloud outages, Honeywell T9 software limitations, and an outdoor unit that survived being crushed by a falling tree, Talvi Fox codified these thermodynamic principles to protect expensive hardware and deliver genuine whole-home comfort.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- High-Voltage Disclaimer Section -->
+  <section class="disclaimer-section">
+    <div class="container">
+      <div class="disclaimer-card">
+        <div class="disclaimer-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span>Critical Safety & High-Voltage HVAC Disclaimer</span>
+        </div>
+        <div class="disclaimer-body">
+          <p>
+            Your HVAC system is arguably the most critical and expensive piece of hardware in your home. This configuration controls physical, high-voltage equipment and is provided "AS-IS", without warranty of any kind. Local electrical and building codes vary everywhere; if you choose to install any supporting equipment of any voltage rating, you do so entirely at your own risk.
+          </p>
+          <p style="margin-top: 10px;">
+            Proceed with caution. You are solely responsible for ensuring that all hardware compressor delay failsafes remain active at the physical equipment board level.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="container">
+    <section class="cta-banner" data-theme-trigger="ember">
+      <h2>Stop Short-Cycling Your Compressor</h2>
+      <p>
+        Deploy Järki Kettu Core for free today and experience true thermodynamic equilibrium across your entire home.
+      </p>
+      <div class="hero-actions-row" style="margin-bottom: 0;">
+        <a href="https://github.com/TalviFox/Jarki-Kettu-Core" target="_blank" rel="noopener noreferrer" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>View on GitHub</span>
+        </a>
+        <a href="https://www.patreon.com/cw/TalviFox" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.386.5C10.62.5 6.744 4.38 6.744 9.15c0 4.754 3.877 8.622 8.642 8.622 4.75 0 8.614-3.868 8.614-8.622C24 4.38 20.136.5 15.386.5zM0 .5v23h4.22V.5H0z"/>
+          </svg>
+          <span>Support on Patreon</span>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <img src="assets/talvi_fox_cutout.png" alt="Talvi Fox" class="footer-logo pixel-art" width="32" height="32">
+          <span>FoxDen Software</span>
+        </div>
+        <ul class="footer-links">
+          <li><a href="https://wirefox.foxdensoftware.dev/" target="_blank" rel="noopener noreferrer" class="footer-link">WireFox</a></li>
+          <li><a href="https://github.com/TalviFox/Jarki-Kettu-Core" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub</a></li>
+          <li><a href="https://www.patreon.com/cw/TalviFox" target="_blank" rel="noopener noreferrer" class="footer-link">Patreon</a></li>
+          <li><a href="https://ko-fi.com/talvisden" target="_blank" rel="noopener noreferrer" class="footer-link">Ko-fi</a></li>
+          <li><a href="https://community.home-assistant.io/" target="_blank" rel="noopener noreferrer" class="footer-link">Home Assistant Community</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 FoxDen Software / Talvi Fox. Built for Home Assistant.
+        </div>
+        <div>
+          Licensed under <strong>PolyForm Noncommercial 1.0.0</strong>. Commercial deployment requires active Patreon exemption.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+</body>
+</html>

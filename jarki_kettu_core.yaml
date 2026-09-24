@@ -1,5 +1,5 @@
 # ==============================================================================
-#  JÄRKI KETTU CORE MODULE (The Clever Fox)
+#  JÄRKI KETTU CORE MODULE (The Smart Fox)
 #  Replaces native thermostat "Auto" mode with a server-side coast zone.
 # ==============================================================================
 #  Copyright (c) 2025-2026 Talvi Fox | FoxDen Software. All rights reserved.
@@ -28,9 +28,11 @@
 #  SETUP INSTRUCTIONS:
 #  1. Place this file in your Home Assistant 'packages' folder.
 #  2. Find & Replace the following placeholders:
-#     climate.YOUR_THERMOSTAT       -> Your actual climate entity
-#     sensor.YOUR_ROOM_SENSOR_1     -> Room 1 Temperature Sensor
-#     sensor.YOUR_ROOM_SENSOR_2     -> Room 2 Temperature Sensor
+#     climate.YOUR_THERMOSTAT            -> Your actual climate entity
+#     sensor.YOUR_ROOM_SENSOR_1          -> Room 1 Temperature Sensor
+#     sensor.YOUR_ROOM_SENSOR_2          -> Room 2 Temperature Sensor
+#     sensor.YOUR_OUTDOOR_TEMP_SENSOR    -> (Recommended) Local outdoor temp sensor (Shelly/Zigbee)
+#     weather.YOUR_LOCAL_WEATHER         -> (Alternative) Outdoor weather provider (e.g. weather.home)
 # ==============================================================================
 
 input_select:
@@ -106,6 +108,26 @@ template:
             {% else %}
               {% set active_temp = ha_average | float(70) %}
             {% endif %}
+
+            {# --- OUTDOOR TELEMETRY HIERARCHY (Local-First Duality) --- #}
+            {# 1. Check for physical outdoor sensor first (Zero-cloud, local push, boot-safe) #}
+            {% set outdoor_sensor_raw = states('sensor.YOUR_OUTDOOR_TEMP_SENSOR') %}
+            {% set has_physical_sensor = outdoor_sensor_raw not in ['unavailable', 'unknown', none] and outdoor_sensor_raw | float(-999) != -999 %}
+            
+            {# 2. Fall back to cloud weather provider if physical sensor is absent #}
+            {% set weather_attr = state_attr('weather.YOUR_LOCAL_WEATHER', 'temperature') %}
+            {% set has_weather_attr = weather_attr not in ['unavailable', 'unknown', none] %}
+            
+            {% if has_physical_sensor %}
+              {% set out = outdoor_sensor_raw | float %}
+              {% set has_outdoor = true %}
+            {% elif has_weather_attr %}
+              {% set out = weather_attr | float %}
+              {% set has_outdoor = true %}
+            {% else %}
+              {% set out = none %}
+              {% set has_outdoor = false %}
+            {% endif %}
             
             {% set current_demand = states('sensor.dynamic_smart_mode_demand') %}
             
@@ -114,9 +136,14 @@ template:
               {{ 'heat' if active_temp < (target_heat + 0.5) else 'off' }}
             {% elif current_demand == 'cool' %}
               {{ 'cool' if active_temp > target_cool else 'off' }}
-            {% elif active_temp <= (target_heat - 1.0) %}
+            {% elif has_outdoor and out < 60 and active_temp <= (target_heat - 1.0) %}
+              {{ 'heat' if out < 70 else 'off' }}
+            {% elif has_outdoor and out >= 60 and active_temp >= (target_cool + 2.0) %}
+              {{ 'cool' if out > 55 else 'off' }}
+            {# Failsafe / Offline Mode: If outdoor sensors are offline or unconfigured, fall back to pure indoor deadbands #}
+            {% elif not has_outdoor and active_temp <= (target_heat - 1.0) %}
               heat
-            {% elif active_temp >= (target_cool + 2.0) %}
+            {% elif not has_outdoor and active_temp >= (target_cool + 2.0) %}
               cool
             {% else %}
               off
