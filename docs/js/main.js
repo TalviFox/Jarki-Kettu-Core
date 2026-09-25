@@ -221,7 +221,7 @@
         if (labelStdThird) labelStdThird.textContent = 'Aux Heat Strip Activation:';
         if (labelJkThird) labelJkThird.textContent = 'Envelope Thermal Storage:';
         if (simScienceTitle) simScienceTitle.textContent = '🔬 Building Science: Thermal Mass & Auxiliary Heat Lockout';
-        if (simScienceP) simScienceP.textContent = "During winter heating, narrow thermostat deadbands fail to warm structural framing and drywall. Rapid air-temperature drops frequently trigger expensive 10kW auxiliary electric heat strips. Järki Kettu executes deep steady-state soaks, storing BTUs in the home's structural mass while completely locking out auxiliary resistance strips.";
+        if (simScienceP) simScienceP.textContent = "During winter heating, narrow thermostat deadbands fail to warm structural framing and drywall. Rapid air-temperature drops frequently trigger expensive 5kW–15kW auxiliary electric heat strips. Järki Kettu executes deep steady-state soaks, storing BTUs in the home's structural mass while completely locking out auxiliary resistance strips.";
       } else {
         if (labelDriftTitle) labelDriftTitle.textContent = 'Envelope Heat Gain Rate (dT/dt)';
         if (driftHint) driftHint.textContent = 'Passive heat gain (solar radiation & ambient infiltration) during cut-out.';

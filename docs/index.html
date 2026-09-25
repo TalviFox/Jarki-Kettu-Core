@@ -277,7 +277,7 @@
           </div>
           <h3 class="physics-card-title">Heat Pump Setpoint Walker</h3>
           <p class="physics-card-body">
-            Heat pumps are built for long, predictable, steady-state cycles. If you make a sudden 3°F setpoint jump, residential thermostats panic and trigger expensive 10kW auxiliary resistive heating strips, spiking your electric bill.
+            Heat pumps are built for long, predictable, steady-state cycles. If you make a sudden 3°F setpoint jump, residential thermostats panic and trigger expensive 5kW–15kW auxiliary resistive heating strips, spiking your electric bill.
           </p>
           <div class="physics-highlight-box">
             <strong>Micro-Stepping Logic:</strong> Järki Kettu's Setpoint Walker nudges the thermostat setpoint in gentle 1.0°F intervals, keeping the compressor running at optimal COP while locking out auxiliary heat strips.
@@ -582,7 +582,7 @@
                   <line x1="15" y1="9" x2="9" y2="15"></line>
                   <line x1="9" y1="9" x2="15" y2="15"></line>
                 </svg>
-                <span><strong>Triggers expensive 10kW auxiliary heat strips</strong> on sudden setpoint recovery jumps in heat pumps.</span>
+                <span><strong>Triggers expensive auxiliary heat strips (typically 5kW–15kW)</strong> on sudden setpoint recovery jumps in heat pumps.</span>
               </li>
               <li class="comparison-item cross">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1032,7 +1032,7 @@
           </button>
           <div class="faq-answer">
             <p>
-              In practice, no. Steady-state, continuous compressor runtimes operate at much higher mechanical efficiency (COP) than frequent stop-and-start cycles. Furthermore, long runs eliminate the repeated high-amperage inrush currents that occur every time a compressor starts. For heat pumps, the built-in Setpoint Walker specifically prevents the system from triggering expensive 10kW auxiliary resistive heating elements.
+              In practice, no. Steady-state, continuous compressor runtimes operate at much higher mechanical efficiency (COP) than frequent stop-and-start cycles. Furthermore, long runs eliminate the repeated high-amperage inrush currents that occur every time a compressor starts. For heat pumps, the built-in Setpoint Walker specifically prevents the system from triggering power-hungry auxiliary resistive heating elements (typically 5kW–15kW).
             </p>
           </div>
         </div>
@@ -1062,7 +1062,10 @@
           </button>
           <div class="faq-answer">
             <p>
-              Järki Kettu features built-in <strong>Graceful Degradation</strong>. If your room sensors or Home Assistant instance go offline, the automation idles safely and your physical wall thermostat automatically resumes control using its internal hardware logic and temperature sensors.
+              Järki Kettu features built-in <strong>Graceful Degradation</strong>. Because Järki Kettu communicates via standard setpoints and modes rather than overriding low-level equipment wiring, your physical thermostat always retains its own internal safety logic. If Home Assistant reboots or a sensor drops offline, the automations safely idle and your wall thermostat simply continues running in its last commanded state, governed by its own onboard sensors and equipment delays.
+            </p>
+            <p style="margin-top: 8px; font-size: 0.9em; opacity: 0.85;">
+              <em>Edge Case Note: Because Järki Kettu commands an <code>off</code> state during Coast Zones to prevent short-cycling, if your Home Assistant host suffers an unrecovered power outage while coasting, the thermostat will remain in <code>off</code> until Home Assistant boots back up, you change the mode at the physical wall, or the thermostat's native hardware freeze protection engages. Always ensure your wall thermostat's minimum safety/freeze limits remain active in its installer settings.</em>
             </p>
           </div>
         </div>
@@ -1070,14 +1073,14 @@
         <!-- Q5 -->
         <div class="faq-item">
           <button class="faq-question">
-            <span>Can I use this with Heat Pumps and Mini-Splits?</span>
+            <span>What HVAC equipment and thermostats are supported?</span>
             <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </button>
           <div class="faq-answer">
             <p>
-              Yes! Heat pumps benefit the most from Järki Kettu's thermodynamics. Heat pumps are engineered for long, continuous, steady-state runtimes. The integrated Setpoint Walker steps the target temperature gradually, ensuring your compressor does the heavy lifting while locking out expensive emergency strip heat.
+              Any thermostat that integrates into Home Assistant as a standard <code>climate</code> entity and allows setting HVAC modes (heat/cool/off) and target temperatures will work. Heat pumps benefit the most from Järki Kettu's thermodynamics—the integrated Setpoint Walker steps target temperatures gradually to ensure the compressor does the heavy lifting while locking out expensive auxiliary heat strips. <em>(Note: While any climate entity allowing mode and temperature control can receive commands, testing has been focused on central ducted 24V thermostat platforms like Venstar and Honeywell, rather than mini-splits).</em>
             </p>
           </div>
         </div>
