@@ -1009,6 +1009,22 @@ a {
   color: var(--brand-frost-light);
 }
 
+.sim-delta-badge {
+  font-family: var(--font-mono);
+  color: var(--brand-frost);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.sim-delta-legend {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  font-style: italic;
+  margin-left: 4px;
+}
+
 .calc-val-pill.amber {
   color: var(--brand-amber);
 }
@@ -2038,14 +2054,21 @@ a {
 }
 
 /* Simulated Home Assistant Lovelace Card Styles */
+.ha-mock-container {
+  max-width: 580px;
+  margin: 28px auto 16px auto;
+  width: 100%;
+}
+
 .ha-mock-wrapper {
   background: #0d1321;
   border: 1px solid rgba(56, 189, 248, 0.25);
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7), 0 0 25px -5px var(--frost-glow-soft);
-  margin: 28px 0;
+  margin: 16px auto 0 auto;
   max-width: 580px;
+  width: 100%;
 }
 
 .ha-mock-topbar {

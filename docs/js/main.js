@@ -151,6 +151,8 @@
     const driftHint = document.getElementById('calc-drift-hint');
     const valCapacityTons = document.getElementById('val-capacity-tons');
     const simRecoverySpeed = document.getElementById('sim-recovery-speed');
+    const simRecoveryLabel = document.getElementById('sim-recovery-label');
+    const simRecoveryContext = document.getElementById('sim-recovery-context');
 
     // Season Buttons
     const seasonButtons = document.querySelectorAll('#sim-season-group .sim-pill-btn');
@@ -216,14 +218,18 @@
 
     function updateSeasonText() {
       if (currentSeason === 'heat') {
-        if (labelDriftTitle) labelDriftTitle.textContent = 'Envelope Heat Loss Rate (dT/dt)';
+        if (labelDriftTitle) {
+          labelDriftTitle.innerHTML = 'Envelope Heat Loss Rate <span class="sim-delta-badge">(ΔT / hr)</span> <span class="sim-delta-legend">*Delta T</span>';
+        }
         if (driftHint) driftHint.textContent = 'Passive heat loss (conductive escape & cold infiltration) during cut-out.';
         if (labelStdThird) labelStdThird.textContent = 'Aux Heat Strip Activation:';
         if (labelJkThird) labelJkThird.textContent = 'Envelope Thermal Storage:';
         if (simScienceTitle) simScienceTitle.textContent = '🔬 Building Science: Thermal Mass & Auxiliary Heat Lockout';
         if (simScienceP) simScienceP.textContent = "During winter heating, narrow thermostat deadbands fail to warm structural framing and drywall. Rapid air-temperature drops frequently trigger expensive 5kW–15kW auxiliary electric heat strips. Järki Kettu executes deep steady-state soaks, storing BTUs in the home's structural mass while completely locking out auxiliary resistance strips.";
       } else {
-        if (labelDriftTitle) labelDriftTitle.textContent = 'Envelope Heat Gain Rate (dT/dt)';
+        if (labelDriftTitle) {
+          labelDriftTitle.innerHTML = 'Envelope Heat Gain Rate <span class="sim-delta-badge">(ΔT / hr)</span> <span class="sim-delta-legend">*Delta T</span>';
+        }
         if (driftHint) driftHint.textContent = 'Passive heat gain (solar radiation & ambient infiltration) during cut-out.';
         if (labelStdThird) labelStdThird.textContent = 'Latent Capacity Degradation:';
         if (labelJkThird) labelJkThird.textContent = 'Sensible Heat Ratio (SHR):';
@@ -288,10 +294,22 @@
       const netRecF = Math.max(0.4, grossRateF - driftF);
 
       if (simRecoverySpeed) {
-        if (currentUnit === 'f') {
-          simRecoverySpeed.textContent = `+${netRecF.toFixed(1)}°F / hr`;
+        if (currentSeason === 'heat') {
+          if (simRecoveryLabel) simRecoveryLabel.textContent = 'Net Heating Recovery:';
+          if (simRecoveryContext) simRecoveryContext.textContent = '(overcoming envelope heat loss)';
+          if (currentUnit === 'f') {
+            simRecoverySpeed.textContent = `+${netRecF.toFixed(1)}°F / hr`;
+          } else {
+            simRecoverySpeed.textContent = `+${(netRecF * (5 / 9)).toFixed(2)}°C / hr`;
+          }
         } else {
-          simRecoverySpeed.textContent = `+${(netRecF * (5 / 9)).toFixed(2)}°C / hr`;
+          if (simRecoveryLabel) simRecoveryLabel.textContent = 'Net Cooling Pull-Down:';
+          if (simRecoveryContext) simRecoveryContext.textContent = '(overcoming envelope heat gain)';
+          if (currentUnit === 'f') {
+            simRecoverySpeed.textContent = `-${netRecF.toFixed(1)}°F / hr`;
+          } else {
+            simRecoverySpeed.textContent = `-${(netRecF * (5 / 9)).toFixed(2)}°C / hr`;
+          }
         }
       }
 

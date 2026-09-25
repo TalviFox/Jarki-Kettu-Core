@@ -354,7 +354,7 @@
           <!-- Main Slider: Whole Home Drift Rate -->
           <div class="calc-control-group">
             <div class="calc-label-row">
-              <label for="calc-drift-rate" id="label-drift-title">Envelope Operative Drift Rate (dT/dt)</label>
+              <label for="calc-drift-rate" id="label-drift-title">Envelope Heat Loss Rate <span class="sim-delta-badge">(ΔT / hr)</span> <span class="sim-delta-legend">*Delta T</span></label>
               <span id="val-drift-rate" class="calc-val-pill">1.4°F / hr</span>
             </div>
             <input type="range" id="calc-drift-rate" class="calc-slider" min="0.2" max="3.5" step="0.1" value="1.4">
@@ -365,7 +365,7 @@
             </div>
 
             <div class="calc-sub-hint" id="calc-drift-hint">
-              Passive operative decay during compressor cut-out.
+              Passive heat loss (conductive escape & cold infiltration) during cut-out.
             </div>
           </div>
 
@@ -381,8 +381,8 @@
               <button type="button" class="sim-cap-btn" data-tons="4.0">4.0 Ton <small>(48k BTU/h)</small></button>
               <button type="button" class="sim-cap-btn" data-tons="5.0">5.0 Ton <small>(60k BTU/h)</small></button>
             </div>
-            <div class="calc-sub-hint">
-              Net Operative Recovery Rate: <strong id="sim-recovery-speed">+2.1°F / hr</strong> above envelope infiltration.
+            <div class="calc-sub-hint" id="sim-recovery-hint">
+              <span id="sim-recovery-label">Net Heating Recovery:</span> <strong id="sim-recovery-speed">+2.1°F / hr</strong> <span id="sim-recovery-context">(overcoming envelope heat loss)</span>.
             </div>
           </div>
 
@@ -744,7 +744,7 @@
               </div>
 
               <!-- Interactive Simulated Lovelace Card (No Screenshots Needed!) -->
-              <div style="margin-top: 24px;">
+              <div class="ha-mock-container">
                 <div style="margin-bottom: 12px;">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                     <h5 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">Interactive Lovelace Card Preview</h5>
@@ -884,7 +884,7 @@
               <p>Open your Lovelace Dashboard, add a <strong>Manual</strong> card, and paste the code from <code>vertailukohta_lovelace_ui.yaml</code>. Your Comfort and Efficiency indexes will begin scoring in real time.</p>
 
               <!-- Simulated Vertailukohta Lovelace Card -->
-              <div style="margin-top: 24px;">
+              <div class="ha-mock-container">
                 <div style="margin-bottom: 12px;">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
                     <h5 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">Vertailukohta Lovelace Card Preview</h5>
