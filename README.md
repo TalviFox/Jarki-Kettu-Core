@@ -97,11 +97,11 @@ As a sysadmin, I look at the world through telemetry, feedback loops, root cause
 
 This module is designed to work with almost any modern 24V Home Assistant-compatible smart thermostat. The logic lives entirely inside Home Assistant and is **not** locked into any specific ecosystem. 
 
-**A Note on the Honeywell T9 vs. T7900:**
+**A Note on the Honeywell T9 vs. Venstar T7900:**
 
-This project originally started specifically to work around the Honeywell T9's biggest annoyances, and 99% of the foundational code was built and tested against it. However, I ended up transitioning to the **T7900** platform earlier than expected. 
+This project originally started specifically to work around the Honeywell T9's biggest annoyances, and 99% of the foundational code was built and tested against it. However, I ended up transitioning to the **Venstar ColorTouch (T7900)** platform earlier than expected. 
 
-This does not invalidate the T9 work! The core logic remains identical. However, please be aware that **all future updates will be focused on the T7900 platform and generic open-API thermostats.** This absolutely will not bar the T9 (or any other restricted thermostat) from working, but depending on the thermostat's internal logic, future updates may require you to rely on some of my less desirable, brute-force workarounds to get the same results.
+This does not invalidate the T9 work! The core logic remains identical. However, please be aware that **all future updates will be focused on the Venstar T7900 platform and generic open-API thermostats.** This absolutely will not bar the T9 (or any other restricted thermostat) from working, but depending on the thermostat's internal logic, future updates may require you to rely on some of my less desirable, brute-force workarounds to get the same results.
 
 **Recommended Sensors:**
 
@@ -113,7 +113,9 @@ To feed the logic engine, I personally use Shelly ZB e-ink displays for indoor m
 2. Download `jarki_kettu_core.yaml` and place it in your Home Assistant `packages/` directory.
 3. Open the file and perform a Find & Replace for:
    - `climate.YOUR_THERMOSTAT`
-   - `sensor.YOUR_ROOM_SENSOR_1` etc...
+   - `sensor.YOUR_ROOM_SENSOR_1` (and `2`)
+   - `sensor.YOUR_OUTDOOR_TEMP_SENSOR` (Recommended local Shelly/Zigbee sensor)
+   - `weather.YOUR_LOCAL_WEATHER` (Optional cloud weather alternative)
 4. Download `jarki_kettu_core_ui_dashboard.yaml`, open your Home Assistant Dashboard, add a "Manual" Lovelace card, and paste the code.
 5. **Important:** On your physical wall thermostat, delete all native schedules/timers and set the fan to "Circulate" (if available). Let Järki Kettu drive!
 
@@ -153,6 +155,8 @@ To manage the sheer scale of a massive smart home architecture, I utilize AI cod
 This configuration controls physical, high-voltage HVAC equipment. It is provided "AS-IS", without warranty of any kind. Local electrical and building codes vary everywhere; if you choose to install any supporting equipment of any voltage rating, you do so entirely at your own risk and without my recommendation. Proceed with extreme caution. You are solely responsible for ensuring your hardware failsafes and compressor delays are active at the equipment level. This code also assumes your system is operating within manufacturer specifications; equipment running out of specification will produce unexpected results.
 
 **The "Bug" Disclaimer:** Just a final bit of CYA (Cover Your Ass). I am surprised you read down this far, but I think it needs to be said: I did not write Home Assistant. While we all know Home Assistant is incredibly reliable, it is not perfect, and I am not a full-time software engineer. Bugs will happen. I will do my absolute best to patch obvious issues when I find them or when they are reported, but this is a one-man passion project and I can only help so much. If you've read this far, you clearly care about your system, and I'm glad you're here.
+
+**Trademark Notice:** All product and company names (including Ecobee, Google Nest, Honeywell, Venstar, and Shelly) are trademarks™ or registered® trademarks of their respective holders. Mention of them in this repository is strictly for identification, technical compatibility, and comparative purposes, and does not imply any affiliation with or endorsement by them.
 
 ## ⚖️ License
 
