@@ -15,7 +15,7 @@ Most "smart" HVAC automations aren't actually smart, they are purely reactive an
 - **Dynamic Coast Zones:** System rests comfortably between wide deadbands.
 - **Deep Soaks:** Dynamically stretches the physical wall unit's setpoint to force the compressor to run long enough to actually condition the house.
 - **Heat Pump Optimized:** Includes a "Setpoint Walker" option to prevent Heat Pumps from panicking and triggering expensive Aux/Emergency Heat strips.
-- **Graceful Degradation:** Defaults back to the thermostat's internal logic if your Home Assistant sensors go offline or reboot.
+- **Graceful Degradation:** The physical thermostat safely holds its last commanded state and onboard hardware safety logic if Home Assistant reboots or sensors drop offline.
 
 ## 🧠 The Paradigm Shift: Set a Range, Ignore the Number
 
@@ -94,8 +94,8 @@ I am not a licensed HVAC technician. I'm a Systems Administrator. But if you thi
 As a sysadmin, I look at the world through telemetry, feedback loops, root cause analysis, and uptime efficiency. When a thermostat short-cycles, an HVAC tech might see a hardware quirk; I see a flawed logic loop and poor resource allocation. I didn't approach this like a mechanic fixing a machine; I approached it like an IT engineer optimizing a data center. The result is a mathematically sound, telemetry-driven orchestration engine that treats your home's thermal dynamics with the exact same respect as a production server environment.
 
 ## 🔌 Hardware Compatibility
-
-This module is designed to work with almost any modern 24V Home Assistant-compatible smart thermostat. The logic lives entirely inside Home Assistant and is **not** locked into any specific ecosystem. 
+ 
+This module is designed to work with any smart thermostat exposed to Home Assistant as a standard `climate` entity that allows setting HVAC modes (heat/cool/off) and target temperatures. The logic lives entirely inside Home Assistant and is **not** locked into any specific ecosystem (tested and refined primarily on central ducted 24V platforms like the Honeywell T9 and Venstar T7900). 
 
 **A Note on the Honeywell T9 vs. Venstar T7900:**
 
@@ -156,7 +156,9 @@ This configuration controls physical, high-voltage HVAC equipment. It is provide
 
 **The "Bug" Disclaimer:** Just a final bit of CYA (Cover Your Ass). I am surprised you read down this far, but I think it needs to be said: I did not write Home Assistant. While we all know Home Assistant is incredibly reliable, it is not perfect, and I am not a full-time software engineer. Bugs will happen. I will do my absolute best to patch obvious issues when I find them or when they are reported, but this is a one-man passion project and I can only help so much. If you've read this far, you clearly care about your system, and I'm glad you're here.
 
-**Trademark Notice:** All product and company names (including Ecobee, Google Nest, Honeywell, Venstar, and Shelly) are trademarks™ or registered® trademarks of their respective holders. Mention of them in this repository is strictly for identification, technical compatibility, and comparative purposes, and does not imply any affiliation with or endorsement by them.
+**Host Availability & Coast State:** Because Järki Kettu commands an `off` state during Coast Zones to prevent short-cycling, if your Home Assistant host suffers an unrecovered power outage or hardware failure while coasting, the thermostat will remain in `off` until Home Assistant boots back up, you manually select a mode at the physical wall, or the thermostat's native hardware freeze protection threshold is reached. Always ensure your wall thermostat's minimum safety/freeze limits remain enabled in its installer menu.
+
+**Trademark Notice:** Home Assistant is a registered trademark of the Open Home Foundation. All product and company names (including Home Assistant, Ecobee, Google Nest, Honeywell, Venstar, and Shelly) are trademarks™ or registered® trademarks of their respective holders. Mention of them in this repository is strictly for platform compatibility, identification, and comparative purposes, and does not imply any affiliation with or endorsement by them.
 
 ## ⚖️ License
 
