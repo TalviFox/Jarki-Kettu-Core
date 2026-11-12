@@ -2074,6 +2074,11 @@ a {
   font-size: 0.82rem;
 }
 
+.footer-bottom-left {
+  flex: 1;
+  min-width: 280px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 960px) {
   .nav-links {
