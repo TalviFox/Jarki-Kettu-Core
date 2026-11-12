@@ -40,7 +40,7 @@
   <!-- Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
 
-  <!-- Structured Data: SoftwareApplication -->
+  <!-- Structured Data: SoftwareApplication & FAQPage -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -48,6 +48,8 @@
     "name": "Järki Kettu Core",
     "operatingSystem": "Home Assistant",
     "applicationCategory": "HomeAutomationApplication",
+    "url": "https://jkc.foxdensoftware.dev/",
+    "downloadUrl": "https://github.com/TalviFox/Jarki-Kettu-Core",
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -56,9 +58,65 @@
     "author": {
       "@type": "Person",
       "name": "Talvi Fox",
-      "url": "https://wirefox.foxdensoftware.dev/"
+      "url": "https://foxdensoftware.dev/"
     },
     "description": "Thermodynamic HVAC Building Management System package for Home Assistant enforcing deep soaks and coast zones."
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why does the temperature on my wall thermostat drift by 1 to 2 degrees?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "That is intentional thermal soaking and coasting. Traditional thermostats short-cycle by firing your compressor for 5 to 8 minutes every half hour to hold a rigid number. Järki Kettu Core runs longer, deliberate cycles to drive thermal energy deep into walls and furniture, then rests across a Coast Zone."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will this increase my monthly electric bill?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Short-cycling is the least efficient way to run HVAC equipment because compressors draw high inrush current on startup and take several minutes to reach peak thermodynamic efficiency. Longer continuous runs with extended coast periods typically reduce total compressor runtime."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Järki Kettu require HACS or custom Python integrations?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Järki Kettu Core is written in pure, native Home Assistant YAML and Jinja2 templating with zero external Python runners or cloud dependencies. The only optional HACS component is card_mod if you choose to deploy the transparent dashboard UI card."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens if Home Assistant reboots or a sensor drops offline?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Järki Kettu features built-in Graceful Degradation. It communicates via standard setpoints and modes rather than overriding equipment wiring, so your physical thermostat retains its own internal safety logic and continues running in its last commanded state."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What HVAC equipment and thermostats are supported?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Any thermostat integrated into Home Assistant as a standard climate entity that supports HVAC modes (heat, cool, off) and target temperatures. Heat pumps especially benefit from the integrated Setpoint Walker that steps target temperatures gradually while locking out auxiliary heat strips."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why did you build this instead of relying on Ecobee or Nest?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Consumer smart thermostats rely on rigid deadbands and cloud dependencies rather than building physics. Järki Kettu Core codifies commercial BMS thermal soak and coast principles locally inside Home Assistant to protect expensive HVAC hardware."
+        }
+      }
+    ]
   }
   </script>
 </head>
@@ -71,15 +129,11 @@
         <span class="brand-text">Järki Kettu <span class="gradient-word">Core</span></span>
       </a>
 
-      <ul class="nav-links">
-        <li><a href="#physics" class="nav-link">Physics</a></li>
-        <li><a href="#simulator" class="nav-link">Simulator</a></li>
-        <li><a href="#comparison" class="nav-link">Comparison</a></li>
-        <li><a href="#installation" class="nav-link">Install</a></li>
-        <li><a href="#faq" class="nav-link">FAQ</a></li>
-      </ul>
-
       <div class="nav-actions">
+        <a href="https://foxdensoftware.dev/" target="_blank" rel="noopener noreferrer" class="btn-foxden" id="nav-foxden-btn" title="FoxDen Software">
+          <img src="assets/foxden_logo_text.png" alt="FoxDen Software" class="foxden-desktop-logo">
+          <img src="assets/foxden_avatar.jpg" alt="FoxDen Software" class="foxden-mobile-avatar">
+        </a>
         <a href="https://github.com/TalviFox/Jarki-Kettu-Core" target="_blank" rel="noopener noreferrer" class="btn-github" title="View GitHub Repository">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
@@ -1162,7 +1216,7 @@
           <span>FoxDen Software</span>
         </div>
         <ul class="footer-links">
-          <li><a href="https://wirefox.foxdensoftware.dev/" target="_blank" rel="noopener noreferrer" class="footer-link">WireFox</a></li>
+          <li><a href="https://foxdensoftware.dev/" target="_blank" rel="noopener noreferrer" class="footer-link">FoxDen Software</a></li>
           <li><a href="https://github.com/TalviFox/Jarki-Kettu-Core" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub</a></li>
           <li><a href="https://www.patreon.com/cw/TalviFox" target="_blank" rel="noopener noreferrer" class="footer-link">Patreon</a></li>
           <li><a href="https://ko-fi.com/talvisden" target="_blank" rel="noopener noreferrer" class="footer-link">Ko-fi</a></li>
@@ -1171,8 +1225,11 @@
       </div>
 
       <div class="footer-bottom">
-        <div>
-          © 2026 FoxDen Software / Talvi Fox. Built for Home Assistant.
+        <div class="footer-meta-brand">
+          <a href="https://foxdensoftware.dev/" target="_blank" rel="noopener noreferrer" class="footer-foxden-link" title="Crafted with care by FoxDen Software">
+            <img src="assets/FoxDen_Minimal_Universal.png" alt="FoxDen Software Logo" class="footer-foxden-logo">
+          </a>
+          <span class="footer-copyright">© 2026 <a href="https://foxdensoftware.dev/" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:none;">FoxDen Software</a> / Talvi Fox. Built for Home Assistant.</span>
         </div>
         <div>
           Licensed under <strong>PolyForm Noncommercial 1.0.0</strong>. Commercial deployment requires active Patreon exemption.
