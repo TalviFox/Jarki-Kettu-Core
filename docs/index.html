@@ -115,6 +115,14 @@
           "@type": "Answer",
           "text": "Consumer smart thermostats rely on rigid deadbands and cloud dependencies rather than building physics. Järki Kettu Core codifies commercial BMS thermal soak and coast principles locally inside Home Assistant to protect expensive HVAC hardware."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I feed BTLE and BTHome temperature sensors into Home Assistant for Järki Kettu?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If you use BTLE BTHome devices without a dedicated ESP32 proxy, AirFoxBT (github.com/TalviFox/AirFoxBT) turns any Windows 10/11 PC into a zero-driver ESPHome Bluetooth Proxy (TCP port 6053) for Home Assistant with zero pairing."
+        }
       }
     ]
   }
@@ -1030,7 +1038,7 @@
             <span class="step-num">2</span>
             <div class="step-content">
               <h4>Recommended Temperature & Humidity Sensors</h4>
-              <p>For indoor telemetry, Shelly ZB e-ink displays provide reliable localized room monitoring. Standard outdoor Shelly or Zigbee environmental sensors supply outdoor reference values.</p>
+              <p>For indoor telemetry, Shelly ZB e-ink displays provide reliable localized room monitoring. Standard outdoor Shelly or Zigbee environmental sensors supply outdoor reference values, or you can use BTLE / BTHome devices via a Bluetooth proxy such as AirFoxBT.</p>
             </div>
           </div>
 
@@ -1042,6 +1050,19 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Separate Companion Callout: AirFoxBT -->
+      <div class="airfox-callout" style="margin-top: 32px;">
+        <img src="assets/airfoxbt_icon.png" alt="AirFoxBT Logo" class="airfox-callout-icon" width="48" height="48">
+        <div class="airfox-callout-body">
+          <div class="airfox-callout-header">
+            <span class="airfox-callout-title">AirFoxBT: Windows ESPHome Bluetooth Proxy</span>
+            <span class="airfox-callout-badge">Separate Companion Tool</span>
+          </div>
+          <p class="airfox-callout-desc">Need BTLE sensors for Järki Kettu? AirFoxBT turns any Windows 10/11 PC into a zero-driver ESPHome Bluetooth Proxy (TCP 6053) for Home Assistant, streaming BTLE BTHome devices with no Zadig or WinUSB hacks.</p>
+        </div>
+        <a href="https://github.com/TalviFox/AirFoxBT" target="_blank" rel="noopener noreferrer" class="airfox-callout-btn">Get AirFoxBT →</a>
       </div>
 
     </div>
@@ -1154,6 +1175,21 @@
           </div>
         </div>
 
+        <!-- Q7 -->
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>How can I feed BTLE and BTHome sensors into Home Assistant for Järki Kettu?</span>
+            <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="faq-answer">
+            <p>
+              If you run BTLE BTHome devices without a dedicated ESP32 proxy board, check out our sister project <a href="https://github.com/TalviFox/AirFoxBT" target="_blank" rel="noopener noreferrer" style="color:var(--accent-frost); text-decoration:underline;"><strong>AirFoxBT</strong></a>. It turns any Windows 10/11 PC into a zero-driver, zero-pairing <strong>ESPHome Bluetooth Proxy (TCP port 6053)</strong> that streams live room temperatures and door/window states straight into Home Assistant.
+            </p>
+          </div>
+        </div>
+
       </div>
 
     </div>
@@ -1217,6 +1253,7 @@
         </div>
         <ul class="footer-links">
           <li><a href="https://foxdensoftware.dev/" target="_blank" rel="noopener noreferrer" class="footer-link">FoxDen Software</a></li>
+          <li><a href="https://github.com/TalviFox/AirFoxBT" target="_blank" rel="noopener noreferrer" class="footer-link">AirFoxBT</a></li>
           <li><a href="https://github.com/TalviFox/Jarki-Kettu-Core" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub</a></li>
           <li><a href="https://www.patreon.com/cw/TalviFox" target="_blank" rel="noopener noreferrer" class="footer-link">Patreon</a></li>
           <li><a href="https://ko-fi.com/talvisden" target="_blank" rel="noopener noreferrer" class="footer-link">Ko-fi</a></li>
